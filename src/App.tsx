@@ -4,9 +4,7 @@ import {
   Heart, 
   ShieldCheck, 
   Users, 
-  Phone, 
   Clock, 
-  MapPin, 
   CheckCircle2, 
   ArrowRight, 
   Menu, 
@@ -21,7 +19,6 @@ import {
   Info,
   UserPlus,
   ShoppingBag,
-  MessageCircle,
   Plus
 } from 'lucide-react';
 
@@ -43,7 +40,6 @@ const Navbar = ({ currentSection, setCurrentSection }: { currentSection: number,
     { name: '가족간병신청', index: 3 },
     { name: '노인장기요양', index: 4 },
     { name: '후기', index: 5 },
-    { name: '고객센터', index: 6 },
   ];
 
   const handleNavClick = (e: any, index: number) => {
@@ -635,82 +631,7 @@ const Testimonials = () => {
   );
 };
 
-const Contact = () => {
-  return (
-    <section id="support" className="h-full flex flex-col bg-white overflow-hidden">
-      <div className="flex-1 flex flex-col justify-center px-6">
-        <div className="max-w-7xl mx-auto w-full">
-          <div className="med-card overflow-hidden">
-            <div className="grid lg:grid-cols-2">
-              <div className="p-8 md:p-12">
-                <span className="text-med-cyan font-black text-xs tracking-[0.3em] uppercase mb-4 block">Contact Us</span>
-                <h2 className="text-3xl md:text-4xl font-bold mb-6">지금 바로 무료 상담을 신청하세요.</h2>
-                
-                <div className="space-y-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center border border-white/10">
-                      <Phone className="text-med-cyan w-6 h-6" />
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Call Center</p>
-                      <p className="text-xl font-black text-white">1688-9739</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center border border-white/10">
-                      <MapPin className="text-med-cyan w-6 h-6" />
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Location</p>
-                      <p className="text-base font-bold text-white">부산광역시 수영구 수영로 665, 201호</p>
-                    </div>
-                  </div>
-                  <a 
-                    href="http://pf.kakao.com/_bvZtG" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-4 group pt-2"
-                  >
-                    <div className="w-12 h-12 bg-[#FEE500] rounded-xl flex items-center justify-center border border-[#FEE500]/20 group-hover:scale-110 transition-transform">
-                      <MessageCircle className="text-[#3A1D1D] w-6 h-6 fill-[#3A1D1D]" />
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">KakaoTalk</p>
-                      <p className="text-base font-bold text-white group-hover:text-[#FEE500] transition-colors">카카오 채널 상담하기</p>
-                    </div>
-                  </a>
-                </div>
-              </div>
 
-              <div className="bg-white/5 p-8 md:p-12 border-l border-white/10">
-                <form className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Name</label>
-                      <input type="text" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-med-cyan transition-all" placeholder="성함" />
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Phone</label>
-                      <input type="tel" className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-med-cyan transition-all" placeholder="연락처" />
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Message</label>
-                    <textarea className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-med-cyan transition-all h-24" placeholder="문의 내용을 입력해주세요."></textarea>
-                  </div>
-                  <button className="w-full med-btn-gradient text-white py-4 rounded-xl font-black text-lg hover:scale-[1.02] transition-all">
-                    상담 신청 완료
-                  </button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <Footer />
-    </section>
-  );
-};
 
 const Footer = () => {
   return (
@@ -802,50 +723,77 @@ const ConsultationForm = () => {
   };
 
   return (
-    <div className="bg-white rounded-[2rem] shadow-2xl p-8 md:p-10 border border-white/20 backdrop-blur-sm lg:ml-auto w-full max-w-md">
-      <div className="mb-8 text-left">
-        <h3 className="text-2xl font-black text-slate-900 mb-2">빠른 상담 신청</h3>
-        <p className="text-slate-500 text-sm">연락처를 남겨주시면 전문 상담사가 즉시 안내해 드립니다.</p>
+    <div className="relative rounded-[2rem] p-8 md:p-10 w-full max-w-md lg:ml-auto overflow-hidden"
+         style={{
+           background: 'rgba(255, 255, 255, 0.12)',
+           backdropFilter: 'blur(24px) saturate(180%)',
+           WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+           border: '1px solid rgba(255, 255, 255, 0.25)',
+           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+         }}
+    >
+      {/* 상단 빛 반사 효과 */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
+      
+      <div className="relative z-10 mb-8 text-left">
+        <h3 className="text-2xl font-black text-white mb-2" style={{ textShadow: '0 1px 8px rgba(0,0,0,0.2)' }}>빠른 상담 신청</h3>
+        <p className="text-white/70 text-sm">연락처를 남겨주시면 전문 상담사가 즉시 안내해 드립니다.</p>
       </div>
 
-      <div className="space-y-4">
+      <div className="relative z-10 space-y-4">
         <div className="space-y-1.5">
-          <label className="text-xs font-bold text-slate-700 uppercase">이름 <span className="text-[#0072BC]">*</span></label>
+          <label className="text-xs font-bold text-white/80 uppercase">이름 <span className="text-sky-300">*</span></label>
           <input
             type="text"
             placeholder="보호자 성함"
             value={formData.name}
             onChange={(e) => setFormData({...formData, name: e.target.value})}
             onKeyDown={(e) => { if (e.key === 'Enter') handleButtonClick(); }}
-            className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0072BC]/20 focus:border-[#0072BC] transition-all text-slate-900 text-sm"
+            className="w-full px-4 py-3.5 rounded-xl text-white text-sm placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all"
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              backdropFilter: 'blur(8px)',
+            }}
           />
         </div>
         <div className="space-y-1.5">
-          <label className="text-xs font-bold text-slate-700 uppercase">전화번호 <span className="text-[#0072BC]">*</span></label>
+          <label className="text-xs font-bold text-white/80 uppercase">전화번호 <span className="text-sky-300">*</span></label>
           <input
             type="tel"
             placeholder="010-0000-0000"
             value={formData.phone}
             onChange={(e) => setFormData({...formData, phone: e.target.value})}
             onKeyDown={(e) => { if (e.key === 'Enter') handleButtonClick(); }}
-            className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0072BC]/20 focus:border-[#0072BC] transition-all text-slate-900 text-sm"
+            className="w-full px-4 py-3.5 rounded-xl text-white text-sm placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all"
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              backdropFilter: 'blur(8px)',
+            }}
           />
         </div>
         <div className="space-y-1.5">
-          <label className="text-xs font-bold text-slate-700 uppercase">추가 문의 사항 (선택)</label>
+          <label className="text-xs font-bold text-white/80 uppercase">추가 문의 사항 (선택)</label>
           <textarea
             rows={2}
             placeholder="간략한 문의사항을 적어주세요."
             value={formData.message}
             onChange={(e) => setFormData({...formData, message: e.target.value})}
-            className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0072BC]/20 focus:border-[#0072BC] transition-all text-slate-900 resize-none text-sm"
+            className="w-full px-4 py-3.5 rounded-xl text-white text-sm placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-white/30 resize-none transition-all"
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              backdropFilter: 'blur(8px)',
+            }}
           />
         </div>
 
         <div className="pt-2">
           {errorMsg && (
-            <div className="mb-3 text-red-500 text-sm font-bold bg-red-50 p-3 rounded-lg border border-red-100 flex items-center justify-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+            <div className="mb-3 text-red-200 text-sm font-bold p-3 rounded-lg flex items-center justify-center gap-2"
+                 style={{ background: 'rgba(239, 68, 68, 0.2)', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
+              <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse"></span>
               {errorMsg}
             </div>
           )}
@@ -853,12 +801,12 @@ const ConsultationForm = () => {
             type="button"
             onClick={handleButtonClick}
             disabled={isSubmitting || submitSuccess}
-            className={`w-full text-white py-4 rounded-xl font-black text-base flex items-center justify-center gap-2 transition-all shadow-lg ${
+            className={`w-full py-4 rounded-xl font-black text-base flex items-center justify-center gap-2 transition-all ${
               submitSuccess
-                ? 'bg-emerald-500 shadow-emerald-500/30'
+                ? 'bg-emerald-500/80 text-white shadow-lg shadow-emerald-500/20'
                 : isSubmitting
-                  ? 'bg-[#0072BC]/70 cursor-not-allowed shadow-[#0072BC]/10'
-                  : 'bg-[#0072BC] hover:bg-blue-700 hover:scale-[1.01] active:scale-[0.99] shadow-blue-500/30'
+                  ? 'bg-white/20 text-white/70 cursor-not-allowed'
+                  : 'bg-white text-[#0072BC] hover:bg-white/90 hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-white/20'
             }`}
           >
             {submitSuccess ? (
@@ -877,7 +825,7 @@ const ConsultationForm = () => {
               </>
             )}
           </button>
-          <p className="text-center text-slate-400 text-[10px] mt-3">
+          <p className="text-center text-white/40 text-[10px] mt-3">
             입력 정보는 상담 목적으로만 사용되며 안전하게 보호됩니다.
           </p>
         </div>
@@ -1051,7 +999,6 @@ export default function App() {
     <FamilyCareForm />,
     <LongTermCare />,
     <Testimonials />,
-    <Contact />
   ];
 
   const handleSetSection = (newIndex: number) => {
