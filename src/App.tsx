@@ -117,7 +117,7 @@ const Hero = () => {
           loop
           muted
           playsInline
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full w-auto h-auto object-cover"
+          className="absolute inset-0 w-full h-full object-cover object-center"
         />
         {/* 영상 위 어두운 오버레이로 텍스트 가독성 확보 */}
         <div className="absolute inset-0 bg-black/40" />
@@ -1104,13 +1104,39 @@ const ConsultationSection = () => {
 };
 
 export default function App() {
-  const [currentSection, setCurrentSection] = useState(0);
+  // 섹션별 고유 해시 — URL로 직접 접근 가능
+  const sectionHashes = ['consultation', 'home', 'registration', 'family', 'longterm', 'reviews'];
+
+  // URL 해시에서 초기 섹션 결정
+  const getInitialSection = () => {
+    const hash = window.location.hash.replace('#', '');
+    const idx = sectionHashes.indexOf(hash);
+    return idx >= 0 ? idx : 0;
+  };
+
+  const [currentSection, setCurrentSection] = useState(getInitialSection);
   const [direction, setDirection] = useState(0);
 
+  // 섹션 변경 시 URL 해시도 함께 업데이트
   const handleSetSection = (newIndex: number) => {
     setDirection(newIndex > currentSection ? 1 : -1);
     setCurrentSection(newIndex);
+    window.history.replaceState(null, '', `#${sectionHashes[newIndex]}`);
   };
+
+  // 브라우저 뒤로가기/앞으로가기 시 해시 변경 감지
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      const idx = sectionHashes.indexOf(hash);
+      if (idx >= 0 && idx !== currentSection) {
+        setDirection(idx > currentSection ? 1 : -1);
+        setCurrentSection(idx);
+      }
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, [currentSection]);
 
   // 상담 신청이 첫 화면으로 노출되도록 배열 순서 조정
   const sections = [
