@@ -108,7 +108,7 @@ const Navbar = ({ currentSection, setCurrentSection }: { currentSection: number,
 
 const Hero = () => {
   return (
-    <section className="relative h-full flex items-center overflow-hidden">
+    <section className="relative w-full aspect-video min-h-[400px] max-h-screen flex items-center overflow-hidden">
       {/* 반응형 영상 배경: 모든 화면 크기에서 비율 유지하며 꽉 채움 */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <video 
