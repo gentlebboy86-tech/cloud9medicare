@@ -34,12 +34,12 @@ const Navbar = ({ currentSection, setCurrentSection }: { currentSection: number,
 
   // 상담 신청을 첫 번째 섹션으로 배치하여 전환율 극대화
   const navLinks = [
-    { name: '상담 신청', index: 0 },
-    { name: '홈', index: 1 },
-    { name: '간병인등록', index: 2 },
-    { name: '가족간병신청', index: 3 },
-    { name: '노인장기요양', index: 4 },
-    { name: '후기', index: 5 },
+    { name: '홈', index: 0 },
+    { name: '간병인등록', index: 1 },
+    { name: '가족간병신청', index: 2 },
+    { name: '노인장기요양', index: 3 },
+    { name: '후기', index: 4 },
+    { name: '상담 신청', index: 5 },
   ];
 
   const handleNavClick = (e: any, index: number) => {
@@ -511,25 +511,25 @@ const LongTermCare = ({ onNavigate }: { onNavigate: (idx: number) => void }) => 
       title: "노인장기요양등급신청",
       desc: "복잡한 등급 신청 절차를 전문가가 무료로 도와드립니다.",
       icon: <FileText className="w-8 h-8 text-med-cyan" />,
-      action: () => onNavigate(0)
+      action: () => onNavigate(5)
     },
     {
       title: "노인장기요양등급안내",
       desc: "등급별 혜택과 판정 기준을 상세히 안내해 드립니다.",
       icon: <Info className="w-8 h-8 text-med-cyan" />,
-      action: () => onNavigate(0)
+      action: () => onNavigate(5)
     },
     {
       title: "요양보호사 신청",
       desc: "어르신께 꼭 맞는 전문 요양보호사를 매칭해 드립니다.",
       icon: <UserPlus className="w-8 h-8 text-med-cyan" />,
-      action: () => onNavigate(0)
+      action: () => onNavigate(5)
     },
     {
       title: "복지용구 신청",
       desc: "어르신의 생활 편의를 돕는 다양한 복지용구를 안내해 드립니다.",
       icon: <ShoppingBag className="w-8 h-8 text-med-cyan" />,
-      action: () => onNavigate(0)
+      action: () => onNavigate(5)
     }
   ];
 
@@ -1105,7 +1105,7 @@ const ConsultationSection = () => {
 
 export default function App() {
   // 섹션별 고유 해시 — URL로 직접 접근 가능
-  const sectionHashes = ['consultation', 'home', 'registration', 'family', 'longterm', 'reviews'];
+  const sectionHashes = ['home', 'registration', 'family', 'longterm', 'reviews', 'consultation'];
 
   // URL 해시에서 초기 섹션 결정
   const getInitialSection = () => {
@@ -1138,14 +1138,14 @@ export default function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, [currentSection]);
 
-  // 상담 신청이 첫 화면으로 노출되도록 배열 순서 조정
+  // 홈이 첫 화면, 상담 신청이 마지막
   const sections = [
-    <ConsultationSection />,
     <Hero />,
     <RegistrationForm />,
     <FamilyCareForm />,
     <LongTermCare onNavigate={handleSetSection} />,
     <Testimonials />,
+    <ConsultationSection />,
   ];
 
   const variants = {
