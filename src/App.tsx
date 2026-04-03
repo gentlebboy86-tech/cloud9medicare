@@ -111,13 +111,15 @@ const Hero = () => {
     <section className="relative h-full flex items-center overflow-hidden">
       {/* Background Image - Reverted to original hospital lobby with a darker feel */}
       <div className="absolute inset-0 z-0">
-        <img 
-          src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=2000" 
-          alt="Modern Hospital Lobby" 
+        <video 
+          src="/hero-bg.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
           className="w-full h-full object-cover"
-          referrerPolicy="no-referrer"
         />
-        {/* Darker overlay for a more professional, focused feel */}
+        {/* 영상 위 어두운 오버레이로 텍스트 가독성 확보 */}
         <div className="absolute inset-0 bg-black/40" />
       </div>
 
@@ -162,11 +164,40 @@ const RegistrationForm = () => {
     residentId: '',
     address: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
+  // FormSubmit API를 통해 간병인 등록 신청을 이메일로 전송
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    alert('간병인 등록 신청이 완료되었습니다.');
-    console.log('Registration Data:', formData);
+    setErrorMsg('');
+    setIsSubmitting(true);
+
+    fetch("https://formsubmit.co/ajax/steave5873@naver.com", {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        _subject: "[간병인 등록] 새로운 간병인 등록 신청",
+        _template: "table",
+        _captcha: "false",
+        "이름": formData.name,
+        "주민등록번호": formData.residentId,
+        "주소": formData.address,
+      })
+    })
+    .then(async (res) => {
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setSubmitSuccess(true);
+        setFormData({ name: '', residentId: '', address: '' });
+        setTimeout(() => setSubmitSuccess(false), 5000);
+      } else {
+        setErrorMsg(data.message || '전송에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+      }
+    })
+    .catch(() => setErrorMsg('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해 주세요.'))
+    .finally(() => setIsSubmitting(false));
   };
 
   return (
@@ -226,11 +257,29 @@ const RegistrationForm = () => {
             </div>
 
             <div className="pt-4">
+              {errorMsg && (
+                <div className="mb-3 text-red-300 text-sm font-bold bg-red-500/10 p-3 rounded-lg border border-red-500/20 text-center">
+                  {errorMsg}
+                </div>
+              )}
               <button 
                 type="submit"
-                className="w-full med-btn-gradient text-white py-4 rounded-xl font-black text-lg hover:scale-[1.02] transition-all shadow-lg"
+                disabled={isSubmitting || submitSuccess}
+                className={`w-full text-white py-4 rounded-xl font-black text-lg transition-all shadow-lg flex items-center justify-center gap-2 ${
+                  submitSuccess
+                    ? 'bg-emerald-500/80'
+                    : isSubmitting
+                      ? 'med-btn-gradient opacity-70 cursor-not-allowed'
+                      : 'med-btn-gradient hover:scale-[1.02]'
+                }`}
               >
-                등록 신청하기
+                {submitSuccess ? (
+                  <><CheckCircle2 className="w-5 h-5" /> 등록 신청이 완료되었습니다</>
+                ) : isSubmitting ? (
+                  <><div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> 접수 중...</>
+                ) : (
+                  '등록 신청하기'
+                )}
               </button>
             </div>
           </form>
@@ -256,21 +305,56 @@ const FamilyCareForm = () => {
     careFee: ''
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+
+  // FormSubmit API를 통해 가족간병 신청을 이메일로 전송
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    alert('가족간병 신청이 접수되었습니다.');
-    console.log('Family Care Data:', formData);
+    setErrorMsg('');
+    setIsSubmitting(true);
+
+    fetch("https://formsubmit.co/ajax/steave5873@naver.com", {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        _subject: "[가족간병] 새로운 가족간병 신청",
+        _template: "table",
+        _captcha: "false",
+        "환자 이름": formData.patientName,
+        "환자 생년월일": formData.patientBirth,
+        "보호자 이름": formData.guardianName,
+        "보호자 주민번호": formData.guardianResidentId,
+        "보호자 전화번호": formData.guardianPhone,
+        "병원명": formData.hospitalName,
+        "간병 기간": formData.stayPeriod,
+        "간병비 금액": formData.careFee,
+      })
+    })
+    .then(async (res) => {
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setSubmitSuccess(true);
+        setFormData({ patientName: '', patientBirth: '', guardianName: '', guardianResidentId: '', guardianPhone: '', hospitalName: '', stayPeriod: '', careFee: '' });
+        setTimeout(() => setSubmitSuccess(false), 5000);
+      } else {
+        setErrorMsg(data.message || '전송에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+      }
+    })
+    .catch(() => setErrorMsg('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해 주세요.'))
+    .finally(() => setIsSubmitting(false));
   };
 
   return (
-    <section id="family" className="h-full flex flex-col justify-center bg-white px-6">
+    <section id="family" className="h-full flex flex-col justify-center bg-slate-900 text-white px-6">
       <div className="max-w-4xl mx-auto w-full">
         <div className="text-center mb-8">
-          <div className="inline-block px-4 py-1 bg-slate-100 rounded-full border border-slate-200 mb-4">
+          <div className="inline-block px-4 py-1 bg-white/10 rounded-full border border-white/20 mb-4">
             <span className="text-med-cyan font-black text-xs tracking-widest uppercase">Family Care</span>
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">가족간병 신청</h2>
-          <p className="text-slate-600 text-base">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">가족간병 신청</h2>
+          <p className="text-slate-400 text-base">
             가족이 직접 간병하시는 경우 필요한 행정 지원 및 교육 신청을 위한 양식입니다.
           </p>
         </div>
@@ -278,94 +362,103 @@ const FamilyCareForm = () => {
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-slate-50 border border-slate-200 rounded-3xl p-6 md:p-10 shadow-sm"
+          className="bg-white/5 border border-white/10 rounded-3xl p-6 md:p-10 backdrop-blur-sm"
         >
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">환자 이름</label>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">환자 이름</label>
                 <input 
                   type="text" 
                   required
                   placeholder="환자 성함"
-                  className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-med-cyan transition-colors"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:outline-none focus:border-med-cyan transition-colors"
                   value={formData.patientName}
                   onChange={(e) => setFormData({...formData, patientName: e.target.value})}
                 />
               </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">환자 생년월일</label>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">환자 생년월일</label>
                 <input 
                   type="text" 
                   required
                   placeholder="YYYY-MM-DD"
-                  className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-med-cyan transition-colors"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:outline-none focus:border-med-cyan transition-colors"
                   value={formData.patientBirth}
                   onChange={(e) => setFormData({...formData, patientBirth: e.target.value})}
                 />
               </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">보호자(간병인) 이름</label>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">보호자(간병인) 이름</label>
                 <input 
                   type="text" 
                   required
                   placeholder="보호자 성함"
-                  className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-med-cyan transition-colors"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:outline-none focus:border-med-cyan transition-colors"
                   value={formData.guardianName}
                   onChange={(e) => setFormData({...formData, guardianName: e.target.value})}
                 />
               </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">보호자 주민번호</label>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">보호자 주민번호</label>
                 <input 
                   type="text" 
                   required
                   placeholder="000000-0******"
-                  className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-med-cyan transition-colors"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:outline-none focus:border-med-cyan transition-colors"
                   value={formData.guardianResidentId}
                   onChange={(e) => setFormData({...formData, guardianResidentId: e.target.value})}
                 />
               </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">보호자 전화번호</label>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">보호자 전화번호</label>
                 <input 
                   type="tel" 
                   required
                   placeholder="010-0000-0000"
-                  className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-med-cyan transition-colors"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:outline-none focus:border-med-cyan transition-colors"
                   value={formData.guardianPhone}
                   onChange={(e) => setFormData({...formData, guardianPhone: e.target.value})}
                 />
               </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">병원명</label>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">병원명</label>
                 <input 
                   type="text" 
                   required
                   placeholder="입원 중인 병원 이름"
-                  className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-med-cyan transition-colors"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:outline-none focus:border-med-cyan transition-colors"
                   value={formData.hospitalName}
                   onChange={(e) => setFormData({...formData, hospitalName: e.target.value})}
                 />
               </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">간병 기간</label>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">간병 기간</label>
                 <input 
                   type="text" 
                   required
                   placeholder="예: 2024-01-01"
-                  className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-med-cyan transition-colors"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:outline-none focus:border-med-cyan transition-colors"
                   value={formData.stayPeriod}
                   onChange={(e) => setFormData({...formData, stayPeriod: e.target.value})}
                 />
               </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">간병비 금액</label>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">간병비 금액</label>
                 <input 
                   type="text" 
                   required
                   placeholder="금액을 입력하세요"
-                  className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-med-cyan transition-colors"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:outline-none focus:border-med-cyan transition-colors"
                   value={formData.careFee}
                   onChange={(e) => setFormData({...formData, careFee: e.target.value})}
                 />
@@ -373,14 +466,36 @@ const FamilyCareForm = () => {
             </div>
 
             <div className="pt-4">
+              {errorMsg && (
+                <div className="mb-3 text-red-300 text-sm font-bold bg-red-500/10 p-3 rounded-lg border border-red-500/20 text-center">
+                  {errorMsg}
+                </div>
+              )}
               <button 
                 type="submit"
-                className="w-full med-btn-gradient text-white py-4 rounded-xl font-black text-lg hover:scale-[1.02] transition-all shadow-lg"
+                disabled={isSubmitting || submitSuccess}
+                className={`w-full text-white py-4 rounded-xl font-black text-lg transition-all shadow-lg flex items-center justify-center gap-2 ${
+                  submitSuccess
+                    ? 'bg-emerald-500/80'
+                    : isSubmitting
+                      ? 'med-btn-gradient opacity-70 cursor-not-allowed'
+                      : 'med-btn-gradient hover:scale-[1.02]'
+                }`}
               >
-                가족간병 신청하기
+                {submitSuccess ? (
+                  <><CheckCircle2 className="w-5 h-5" /> 가족간병 신청이 완료되었습니다</>
+                ) : isSubmitting ? (
+                  <><div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> 접수 중...</>
+                ) : (
+                  '가족간병 신청하기'
+                )}
               </button>
             </div>
           </form>
+          
+          <p className="mt-6 text-center text-slate-500 text-xs">
+            * 수집된 개인정보는 가족간병 신청 및 행정 지원 목적으로만 사용되며, 관련 법령에 따라 안전하게 보호됩니다.
+          </p>
         </motion.div>
       </div>
     </section>
@@ -389,31 +504,32 @@ const FamilyCareForm = () => {
 
 
 
-const LongTermCare = () => {
+const LongTermCare = ({ onNavigate }: { onNavigate: (idx: number) => void }) => {
+  // 각 카드 클릭 시 상담신청 섹션(index 0)으로 이동
   const options = [
     {
       title: "노인장기요양등급신청",
       desc: "복잡한 등급 신청 절차를 전문가가 무료로 도와드립니다.",
       icon: <FileText className="w-8 h-8 text-med-cyan" />,
-      action: () => alert('노인장기요양등급 신청 상담으로 연결됩니다.')
+      action: () => onNavigate(0)
     },
     {
       title: "노인장기요양등급안내",
       desc: "등급별 혜택과 판정 기준을 상세히 안내해 드립니다.",
       icon: <Info className="w-8 h-8 text-med-cyan" />,
-      action: () => alert('노인장기요양등급 안내 페이지로 이동합니다.')
+      action: () => onNavigate(0)
     },
     {
       title: "요양보호사 신청",
       desc: "어르신께 꼭 맞는 전문 요양보호사를 매칭해 드립니다.",
       icon: <UserPlus className="w-8 h-8 text-med-cyan" />,
-      action: () => alert('요양보호사 매칭 상담으로 연결됩니다.')
+      action: () => onNavigate(0)
     },
     {
       title: "복지용구 신청",
       desc: "어르신의 생활 편의를 돕는 다양한 복지용구를 안내해 드립니다.",
       icon: <ShoppingBag className="w-8 h-8 text-med-cyan" />,
-      action: () => alert('복지용구 신청 및 상담으로 연결됩니다.')
+      action: () => onNavigate(0)
     }
   ];
 
@@ -991,20 +1107,20 @@ export default function App() {
   const [currentSection, setCurrentSection] = useState(0);
   const [direction, setDirection] = useState(0);
 
+  const handleSetSection = (newIndex: number) => {
+    setDirection(newIndex > currentSection ? 1 : -1);
+    setCurrentSection(newIndex);
+  };
+
   // 상담 신청이 첫 화면으로 노출되도록 배열 순서 조정
   const sections = [
     <ConsultationSection />,
     <Hero />,
     <RegistrationForm />,
     <FamilyCareForm />,
-    <LongTermCare />,
+    <LongTermCare onNavigate={handleSetSection} />,
     <Testimonials />,
   ];
-
-  const handleSetSection = (newIndex: number) => {
-    setDirection(newIndex > currentSection ? 1 : -1);
-    setCurrentSection(newIndex);
-  };
 
   const variants = {
     enter: (direction: number) => ({
