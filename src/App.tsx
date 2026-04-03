@@ -109,15 +109,15 @@ const Navbar = ({ currentSection, setCurrentSection }: { currentSection: number,
 const Hero = () => {
   return (
     <section className="relative h-full flex items-center overflow-hidden">
-      {/* Background Image - Reverted to original hospital lobby with a darker feel */}
-      <div className="absolute inset-0 z-0">
+      {/* 반응형 영상 배경: 모든 화면 크기에서 비율 유지하며 꽉 채움 */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
         <video 
           src="/hero-bg.mp4"
           autoPlay
           loop
           muted
           playsInline
-          className="w-full h-full object-cover"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full w-auto h-auto object-cover"
         />
         {/* 영상 위 어두운 오버레이로 텍스트 가독성 확보 */}
         <div className="absolute inset-0 bg-black/40" />
@@ -130,7 +130,7 @@ const Hero = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-[1.3] tracking-tight" style={{ textShadow: '0 2px 15px rgba(0,0,0,0.5)' }}>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-[1.3] tracking-tight" style={{ textShadow: '0 2px 15px rgba(0,0,0,0.5)' }}>
               병원동행부터 간병, 요양까지<br />
               빠르고 편리하게
             </h1>
@@ -138,20 +138,20 @@ const Hero = () => {
         </div>
       </div>
       
-      {/* Floating KakaoTalk Button matching the image */}
-      <div className="fixed bottom-10 right-10 z-[100]">
+      {/* 카카오톡 버튼 — 모바일에서 크기 축소 */}
+      <div className="fixed bottom-6 right-6 sm:bottom-10 sm:right-10 z-[100]">
         <motion.a 
           href="http://pf.kakao.com/_bvZtG"
           target="_blank"
           rel="noopener noreferrer"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="bg-[#FAE100] w-24 h-24 rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.2)] flex flex-col items-center justify-center gap-1.5 cursor-pointer"
+          className="bg-[#FAE100] w-16 h-16 sm:w-24 sm:h-24 rounded-2xl sm:rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.2)] flex flex-col items-center justify-center gap-1 sm:gap-1.5 cursor-pointer"
         >
-          <div className="bg-[#3C1E1E] w-12 h-12 rounded-full flex items-center justify-center">
-            <span className="text-[#FAE100] font-black text-xs tracking-tighter">TALK</span>
+          <div className="bg-[#3C1E1E] w-8 h-8 sm:w-12 sm:h-12 rounded-full flex items-center justify-center">
+            <span className="text-[#FAE100] font-black text-[8px] sm:text-xs tracking-tighter">TALK</span>
           </div>
-          <span className="text-[#3C1E1E] text-xs font-black">상담하기</span>
+          <span className="text-[#3C1E1E] text-[8px] sm:text-xs font-black">상담하기</span>
         </motion.a>
       </div>
     </section>
