@@ -110,17 +110,27 @@ const Hero = () => {
   return (
     <section className="relative w-full aspect-video min-h-[400px] max-h-screen flex items-center overflow-hidden">
       {/* 반응형 영상 배경: 모든 화면 크기에서 비율 유지하며 꽉 채움 */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
+      <div className="absolute inset-0 z-0 overflow-hidden bg-black">
+        {/* 1. 배경: 검은 여백 대신 영상을 채우고 블러 처리 */}
         <video 
           src="/hero-bg.mp4"
           autoPlay
           loop
           muted
           playsInline
-          className="absolute inset-0 w-full h-full object-cover object-center"
+          className="absolute inset-0 w-full h-full object-cover blur-3xl opacity-50 scale-110"
+        />
+        {/* 2. 전경: 영상 원본 비율 유지 (잘림 없음) */}
+        <video 
+          src="/hero-bg.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-contain"
         />
         {/* 영상 위 어두운 오버레이로 텍스트 가독성 확보 */}
-        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute inset-0 bg-black/30" />
       </div>
 
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10 w-full">
