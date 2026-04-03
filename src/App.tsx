@@ -35,14 +35,15 @@ const Navbar = ({ currentSection, setCurrentSection }: { currentSection: number,
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // 상담 신청을 첫 번째 섹션으로 배치하여 전환율 극대화
   const navLinks = [
-    { name: '홈', index: 0 },
-    { name: '간병인등록', index: 1 },
-    { name: '가족간병신청', index: 2 },
-    { name: '노인장기요양', index: 3 },
-    { name: '후기', index: 4 },
-    { name: '고객센터', index: 5 },
-    { name: '상담 신청', index: 6 },
+    { name: '상담 신청', index: 0 },
+    { name: '홈', index: 1 },
+    { name: '간병인등록', index: 2 },
+    { name: '가족간병신청', index: 3 },
+    { name: '노인장기요양', index: 4 },
+    { name: '후기', index: 5 },
+    { name: '고객센터', index: 6 },
   ];
 
   const handleNavClick = (e: any, index: number) => {
@@ -741,36 +742,169 @@ const Footer = () => {
   );
 };
 
-const ConsultationSection = () => {
+// 폼만 별도 컴포넌트로 분리 — 상태 변경 시 폼 영역만 리렌더링되어 INP 성능 문제를 해결합니다
+const ConsultationForm = () => {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     message: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    alert('상담 신청이 완료되었습니다. 담당자가 곧 연락드리겠습니다.');
+  const handleButtonClick = () => {
+    setErrorMsg('');
+
+    if (!formData.name.trim() || !formData.phone.trim()) {
+      setErrorMsg('이름과 전화번호를 정확히 입력해 주세요.');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    // requestAnimationFrame으로 브라우저가 로딩 UI를 먼저 그리도록 보장 (INP 해결)
+    requestAnimationFrame(() => {
+      fetch("https://formsubmit.co/ajax/steave5873@naver.com", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          phone: formData.phone,
+          message: formData.message || "기재하지 않음",
+          _subject: "클라우드나인 메디케어: 새로운 상담 신청",
+          _template: "table",
+          _captcha: "false"
+        })
+      })
+      .then(async (response) => {
+        // FormSubmit 응답 본문을 파싱하여 실제 에러 메시지를 확인
+        const data = await response.json();
+        if (response.ok && data.success) {
+          setSubmitSuccess(true);
+          setFormData({ name: '', phone: '', message: '' });
+          setTimeout(() => setSubmitSuccess(false), 5000);
+        } else {
+          // FormSubmit이 반환하는 실제 에러 메시지를 표시
+          setErrorMsg(data.message || '전송에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+        }
+      })
+      .catch(() => {
+        setErrorMsg('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해 주세요.');
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
+    });
   };
 
+  return (
+    <div className="bg-white rounded-[2rem] shadow-2xl p-8 md:p-10 border border-white/20 backdrop-blur-sm lg:ml-auto w-full max-w-md">
+      <div className="mb-8 text-left">
+        <h3 className="text-2xl font-black text-slate-900 mb-2">빠른 상담 신청</h3>
+        <p className="text-slate-500 text-sm">연락처를 남겨주시면 전문 상담사가 즉시 안내해 드립니다.</p>
+      </div>
+
+      <div className="space-y-4">
+        <div className="space-y-1.5">
+          <label className="text-xs font-bold text-slate-700 uppercase">이름 <span className="text-[#0072BC]">*</span></label>
+          <input
+            type="text"
+            placeholder="보호자 성함"
+            value={formData.name}
+            onChange={(e) => setFormData({...formData, name: e.target.value})}
+            onKeyDown={(e) => { if (e.key === 'Enter') handleButtonClick(); }}
+            className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0072BC]/20 focus:border-[#0072BC] transition-all text-slate-900 text-sm"
+          />
+        </div>
+        <div className="space-y-1.5">
+          <label className="text-xs font-bold text-slate-700 uppercase">전화번호 <span className="text-[#0072BC]">*</span></label>
+          <input
+            type="tel"
+            placeholder="010-0000-0000"
+            value={formData.phone}
+            onChange={(e) => setFormData({...formData, phone: e.target.value})}
+            onKeyDown={(e) => { if (e.key === 'Enter') handleButtonClick(); }}
+            className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0072BC]/20 focus:border-[#0072BC] transition-all text-slate-900 text-sm"
+          />
+        </div>
+        <div className="space-y-1.5">
+          <label className="text-xs font-bold text-slate-700 uppercase">추가 문의 사항 (선택)</label>
+          <textarea
+            rows={2}
+            placeholder="간략한 문의사항을 적어주세요."
+            value={formData.message}
+            onChange={(e) => setFormData({...formData, message: e.target.value})}
+            className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0072BC]/20 focus:border-[#0072BC] transition-all text-slate-900 resize-none text-sm"
+          />
+        </div>
+
+        <div className="pt-2">
+          {errorMsg && (
+            <div className="mb-3 text-red-500 text-sm font-bold bg-red-50 p-3 rounded-lg border border-red-100 flex items-center justify-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+              {errorMsg}
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={handleButtonClick}
+            disabled={isSubmitting || submitSuccess}
+            className={`w-full text-white py-4 rounded-xl font-black text-base flex items-center justify-center gap-2 transition-all shadow-lg ${
+              submitSuccess
+                ? 'bg-emerald-500 shadow-emerald-500/30'
+                : isSubmitting
+                  ? 'bg-[#0072BC]/70 cursor-not-allowed shadow-[#0072BC]/10'
+                  : 'bg-[#0072BC] hover:bg-blue-700 hover:scale-[1.01] active:scale-[0.99] shadow-blue-500/30'
+            }`}
+          >
+            {submitSuccess ? (
+              <>
+                <CheckCircle2 className="w-5 h-5" />
+                상담 신청이 완료되었습니다
+              </>
+            ) : isSubmitting ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                안전하게 접수 중...
+              </>
+            ) : (
+              <>
+                무료 상담 신청하기 <ArrowRight className="w-4 h-4" />
+              </>
+            )}
+          </button>
+          <p className="text-center text-slate-400 text-[10px] mt-3">
+            입력 정보는 상담 목적으로만 사용되며 안전하게 보호됩니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ConsultationSection = () => {
   return (
     <section className="h-full overflow-y-auto bg-slate-50 text-slate-800 scroll-smooth">
       {/* Hero Section with Form (Lead Generation Layout) */}
       <div className="relative min-h-[90vh] lg:h-[85vh] flex items-center justify-center overflow-hidden pt-20 pb-10">
         <div className="absolute inset-0 z-0">
-          <img 
-            src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=2000" 
-            alt="Medical Consultation" 
+          <img
+            src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=2000"
+            alt="Medical Consultation"
             className="w-full h-full object-cover"
             referrerPolicy="no-referrer"
           />
           <div className="absolute inset-0 bg-[#0072BC]/80 mix-blend-multiply" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#0072BC] to-[#0072BC]/20" />
         </div>
-        
+
         <div className="relative z-10 max-w-7xl mx-auto px-6 w-full">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            
+
             {/* Hero Text */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
@@ -789,64 +923,13 @@ const ConsultationSection = () => {
               </p>
             </motion.div>
 
-            {/* Lead Capture Form */}
+            {/* Lead Capture Form — 별도 컴포넌트로 분리하여 INP 최적화 */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="bg-white rounded-[2rem] shadow-2xl p-8 md:p-10 border border-white/20 backdrop-blur-sm lg:ml-auto w-full max-w-md"
             >
-              <div className="mb-8 text-center text-left">
-                <h3 className="text-2xl font-black text-slate-900 mb-2">빠른 상담 신청</h3>
-                <p className="text-slate-500 text-sm">연락처를 남겨주시면 전문 상담사가 즉시 안내해 드립니다.</p>
-              </div>
-
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 uppercase">이름 <span className="text-[#0072BC]">*</span></label>
-                  <input 
-                    type="text" 
-                    required
-                    placeholder="보호자 성함"
-                    value={formData.name}
-                    onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0072BC]/20 focus:border-[#0072BC] transition-all text-slate-900 text-sm"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 uppercase">전화번호 <span className="text-[#0072BC]">*</span></label>
-                  <input 
-                    type="tel" 
-                    required
-                    placeholder="010-0000-0000"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                    className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0072BC]/20 focus:border-[#0072BC] transition-all text-slate-900 text-sm"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 uppercase">추가 문의 사항 (선택)</label>
-                  <textarea 
-                    rows={2}
-                    placeholder="간략한 문의사항을 적어주세요."
-                    value={formData.message}
-                    onChange={(e) => setFormData({...formData, message: e.target.value})}
-                    className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0072BC]/20 focus:border-[#0072BC] transition-all text-slate-900 resize-none text-sm"
-                  />
-                </div>
-
-                <div className="pt-2">
-                  <button 
-                    type="submit"
-                    className="w-full bg-[#0072BC] hover:bg-blue-700 text-white py-4 rounded-xl font-black text-base hover:scale-[1.01] active:scale-[0.99] transition-all shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2"
-                  >
-                    무료 상담 신청하기 <ArrowRight className="w-4 h-4" />
-                  </button>
-                  <p className="text-center text-slate-400 text-[10px] mt-3">
-                    입력 정보는 상담 목적으로만 사용되며 안전하게 보호됩니다.
-                  </p>
-                </div>
-              </form>
+              <ConsultationForm />
             </motion.div>
           </div>
         </div>
@@ -960,14 +1043,15 @@ export default function App() {
   const [currentSection, setCurrentSection] = useState(0);
   const [direction, setDirection] = useState(0);
 
+  // 상담 신청이 첫 화면으로 노출되도록 배열 순서 조정
   const sections = [
+    <ConsultationSection />,
     <Hero />,
     <RegistrationForm />,
     <FamilyCareForm />,
     <LongTermCare />,
     <Testimonials />,
-    <Contact />,
-    <ConsultationSection />
+    <Contact />
   ];
 
   const handleSetSection = (newIndex: number) => {
