@@ -759,7 +759,7 @@ const Testimonials = () => {
 
 
 
-const Footer = () => {
+const Footer = ({ onNavigate }: { onNavigate?: (idx: number) => void }) => {
   return (
     <footer className="bg-med-dark text-slate-500 py-6 border-t border-white/5">
       <div className="max-w-7xl mx-auto px-6">
@@ -775,7 +775,7 @@ const Footer = () => {
           
           <div className="flex gap-6 text-[10px] font-bold">
             <a href="#" className="hover:text-med-cyan transition-colors">이용약관</a>
-            <a href="#" className="hover:text-med-cyan transition-colors">개인정보처리방침</a>
+            <button onClick={() => onNavigate && onNavigate(6)} className="hover:text-med-cyan transition-colors cursor-pointer">개인정보처리방침</button>
             <a href="#" className="hover:text-med-cyan transition-colors">고객센터</a>
           </div>
 
@@ -862,8 +862,8 @@ const ConsultationForm = () => {
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
       
       <div className="relative z-10 mb-8 text-left">
-        <h3 className="text-2xl font-black text-white mb-2" style={{ textShadow: '0 1px 8px rgba(0,0,0,0.2)' }}>빠른 상담 신청</h3>
-        <p className="text-white/70 text-sm">연락처를 남겨주시면 전문 상담사가 즉시 안내해 드립니다.</p>
+        <h3 className="text-2xl font-black text-white mb-2" style={{ textShadow: '0 1px 8px rgba(0,0,0,0.2)' }}>전문 간호사 1:1 안심 상담 신청</h3>
+        <p className="text-white/70 text-sm">연락처를 남겨주시면 대표 간호사가 직접 부모님의 상태에 맞는 최적의 케어 플랜을 제안해 드립니다.</p>
       </div>
 
       <div className="relative z-10 space-y-4">
@@ -927,7 +927,7 @@ const ConsultationForm = () => {
             type="button"
             onClick={handleButtonClick}
             disabled={isSubmitting || submitSuccess}
-            className={`w-full py-4 rounded-xl font-black text-base flex items-center justify-center gap-2 transition-all ${
+            className={`w-full py-4 rounded-xl font-black text-xl flex items-center justify-center gap-2 transition-all ${
               submitSuccess
                 ? 'bg-emerald-500/80 text-white shadow-lg shadow-emerald-500/20'
                 : isSubmitting
@@ -947,7 +947,7 @@ const ConsultationForm = () => {
               </>
             ) : (
               <>
-                무료 상담 신청하기 <ArrowRight className="w-4 h-4" />
+                무료 맞춤 케어 상담받기 <ArrowRight className="w-5 h-5 stroke-[2.5]" />
               </>
             )}
           </button>
@@ -960,17 +960,16 @@ const ConsultationForm = () => {
   );
 };
 
-const ConsultationSection = () => {
+const ConsultationSection = ({ onNavigate }: { onNavigate: (idx: number) => void }) => {
   return (
     <section className="h-full overflow-y-auto bg-slate-50 text-slate-800 scroll-smooth">
       {/* Hero Section with Form (Lead Generation Layout) */}
       <div className="relative min-h-[90vh] lg:h-[85vh] flex items-center justify-center overflow-hidden pt-20 pb-10">
         <div className="absolute inset-0 z-0">
           <img
-            src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=2000"
-            alt="Medical Consultation"
-            className="w-full h-full object-cover"
-            referrerPolicy="no-referrer"
+            src="/hero-consultation.png"
+            alt="따뜻한 로컬 간호사와 어르신의 모습"
+            className="w-full h-full object-cover object-center"
           />
           <div className="absolute inset-0 bg-[#0072BC]/80 mix-blend-multiply" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#0072BC] to-[#0072BC]/20" />
@@ -993,7 +992,7 @@ const ConsultationSection = () => {
                 가족의 마음으로 모십니다
               </h2>
               <p className="text-base md:text-lg text-blue-50 font-medium max-w-lg">
-                요양보호사 매칭부터 전문적인 병원 동행까지, 우리 가족을 위한 믿을 수 있는 선택. 지금 바로 전문가와 상담하세요.
+                치매검사부터 전문적인 병원 동행까지, 우리 가족을 위한 믿을 수 있는 선택. 지금 바로 전문가와 상담하세요.
               </p>
             </motion.div>
 
@@ -1108,14 +1107,31 @@ const ConsultationSection = () => {
       </div>
 
 
-      <Footer />
+      <Footer onNavigate={onNavigate} />
+    </section>
+  );
+};
+
+const PrivacyPolicy = () => {
+  return (
+    <section id="privacy" className="h-full overflow-y-auto bg-slate-50 text-slate-800 px-6 py-24 scroll-smooth">
+      <div className="max-w-4xl mx-auto bg-white p-8 md:p-12 rounded-[2rem] shadow-sm border border-slate-100">
+        <h2 className="text-2xl font-black mb-6 border-b pb-4 text-slate-900">개인정보 처리방침</h2>
+        <div className="prose prose-sm max-w-none text-slate-600 space-y-5 text-sm leading-relaxed">
+          <p><strong className="text-slate-800">제1조 (목적)</strong><br/>본 개인정보처리방침은 클라우드나인 메디케어(이하 "회사")가 제공하는 서비스 이용에 있어 관련 법령에 따른 개인정보 보호 및 처리 기준을 규정함을 목적으로 합니다.</p>
+          <p><strong className="text-slate-800">제2조 (수집하는 개인정보 항목)</strong><br/>회사는 상담 및 서비스 제공을 위해 다음의 개인정보를 수집하고 있습니다.<br/>- <strong>필수항목:</strong> 이름, 연락처(전화번호)<br/>- <strong>선택항목:</strong> 기타 문의 내용, 주민등록번호 및 상세 주소 (간병인 등록 또는 가족간병 서비스 신청 시)</p>
+          <p><strong className="text-slate-800">제3조 (개인정보의 처리 목적)</strong><br/>수집된 개인정보는 다음의 목적을 위해 활용됩니다.<br/>- 1:1 전화 상담 및 고객 맞춤형 응대<br/>- 요양보호사 배정 및 최적의 매칭 서비스 제공<br/>- 노인장기요양등급 신청 및 평가를 위한 행정 지원</p>
+          <p><strong className="text-slate-800">제4조 (개인정보의 보유 및 이용기간)</strong><br/>원칙적으로 개인정보 수집 및 이용 목적이 달성된 후에는 해당 정보를 지체 없이 파기합니다. 단, 전자상거래 등에서의 소비자보호에 관한 법률 등 관계 법령의 규정에 의하여 보존할 필요가 있는 경우, 회사는 법령에서 정한 일정한 기간 동안 회원정보를 보관합니다.</p>
+          <p><strong className="text-slate-800">제5조 (개인정보 보호책임자 및 담당 부서)</strong><br/>- 이름: 개인정보 보호 담당자<br/>- 전화번호: 1688-9739<br/>- 주소: 부산광역시 수영구 수영로 665, 201호</p>
+        </div>
+      </div>
     </section>
   );
 };
 
 export default function App() {
   // 섹션별 고유 해시 — URL로 직접 접근 가능
-  const sectionHashes = ['home', 'registration', 'family', 'longterm', 'reviews', 'consultation'];
+  const sectionHashes = ['home', 'registration', 'family', 'longterm', 'reviews', 'consultation', 'privacy'];
 
   // URL 해시에서 초기 섹션 결정
   const getInitialSection = () => {
@@ -1155,7 +1171,8 @@ export default function App() {
     <FamilyCareForm />,
     <LongTermCare onNavigate={handleSetSection} />,
     <Testimonials />,
-    <ConsultationSection />,
+    <ConsultationSection onNavigate={handleSetSection} />,
+    <PrivacyPolicy />
   ];
 
   const variants = {
