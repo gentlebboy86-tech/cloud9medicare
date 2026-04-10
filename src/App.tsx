@@ -108,47 +108,42 @@ const Navbar = ({ currentSection, setCurrentSection }: { currentSection: number,
 
 const Hero = () => {
   return (
-    <section className="relative w-full aspect-video min-h-[400px] max-h-screen flex items-center overflow-hidden">
-      {/* 반응형 영상 배경: 모든 화면 크기에서 비율 유지하며 꽉 채움 */}
-      <div className="absolute inset-0 z-0 overflow-hidden bg-black">
-        {/* 1. 배경: 검은 여백 대신 영상을 채우고 블러 처리 */}
+    <section className="relative w-full h-[80svh] min-h-[500px] md:h-screen flex items-center overflow-hidden">
+      {/* 반응형 영상 배경: 모바일과 PC 모두 화면에 꽉 차도록 object-cover 적용 */}
+      <div className="absolute inset-0 z-0 bg-black">
         <video 
           src="/hero-bg.mp4"
           autoPlay
           loop
           muted
           playsInline
-          className="absolute inset-0 w-full h-full object-cover blur-3xl opacity-50 scale-110"
+          /* 모바일 접속 시 영상 좌우가 잘릴 때 인물(남자)이 중심으로 오도록 object 위치 조정 */
+          className="absolute inset-0 w-full h-full object-cover object-[75%_center] md:object-center opacity-80"
         />
-        {/* 2. 전경: 영상 원본 비율 유지 (잘림 없음) */}
-        <video 
-          src="/hero-bg.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-contain"
-        />
-        {/* 영상 위 어두운 오버레이로 텍스트 가독성 확보 */}
-        <div className="absolute inset-0 bg-black/30" />
+        {/* 영상 가독성을 높이기 위한 그라디언트 오버레이 */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-black/20" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10 w-full">
-        <div className="max-w-3xl">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10 w-full mb-10 md:mb-0 text-center md:text-left">
+        <div className="max-w-3xl mx-auto md:mx-0">
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-[1.3] tracking-tight" style={{ textShadow: '0 2px 15px rgba(0,0,0,0.5)' }}>
-              병원동행부터 간병, 요양까지<br />
-              빠르고 편리하게
+            <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white leading-[1.3] tracking-tight drop-shadow-[0_4px_20px_rgba(0,0,0,0.6)]">
+              병원동행부터 간병, 요양까지<br className="hidden sm:block" />
+              <span className="sm:hidden"> </span>빠르고 편리하게
             </h1>
+            <p className="mt-4 md:mt-6 text-base sm:text-xl text-slate-200 font-medium drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+              내 가족을 돌보는 마음으로, 안전하고 믿을 수 있는 서비스를 제공합니다.
+            </p>
           </motion.div>
         </div>
       </div>
       
-      {/* 카카오톡 버튼 — 모바일에서 크기 축소 */}
+      {/* 카카오톡 버튼 — 모바일에서 크기 축소 및 위치 조정 */}
       <div className="fixed bottom-6 right-6 sm:bottom-10 sm:right-10 z-[100]">
         <motion.a 
           href="http://pf.kakao.com/_bvZtG"
@@ -156,12 +151,12 @@ const Hero = () => {
           rel="noopener noreferrer"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="bg-[#FAE100] w-16 h-16 sm:w-24 sm:h-24 rounded-2xl sm:rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.2)] flex flex-col items-center justify-center gap-1 sm:gap-1.5 cursor-pointer"
+          className="bg-[#FAE100] w-14 h-14 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-2xl sm:rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.3)] flex flex-col items-center justify-center gap-1 sm:gap-1.5 cursor-pointer"
         >
-          <div className="bg-[#3C1E1E] w-8 h-8 sm:w-12 sm:h-12 rounded-full flex items-center justify-center">
-            <span className="text-[#FAE100] font-black text-[8px] sm:text-xs tracking-tighter">TALK</span>
+          <div className="bg-[#3C1E1E] w-7 h-7 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center">
+            <span className="text-[#FAE100] font-black text-[7px] sm:text-[10px] md:text-xs tracking-tighter">TALK</span>
           </div>
-          <span className="text-[#3C1E1E] text-[8px] sm:text-xs font-black">상담하기</span>
+          <span className="text-[#3C1E1E] text-[7px] sm:text-[10px] md:text-xs font-black">상담하기</span>
         </motion.a>
       </div>
     </section>
