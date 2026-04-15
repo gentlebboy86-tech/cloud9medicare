@@ -117,8 +117,8 @@ const Hero = () => {
           loop
           muted
           playsInline
-          /* 모바일 접속 시 영상 좌우가 잘릴 때 인물(남자)이 중심으로 오도록 object 위치 조정 */
-          className="absolute inset-0 w-full h-full object-cover object-[75%_center] md:object-center opacity-80"
+          /* 모바일: object-contain으로 인물이 잘리지 않게 전체 표시 / 데스크톱: object-cover로 화면 가득 채움 */
+          className="absolute inset-0 w-full h-full object-contain md:object-cover md:object-center opacity-80"
         />
         {/* 영상 가독성을 높이기 위한 그라디언트 오버레이 */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
@@ -359,9 +359,26 @@ const FamilyCareForm = () => {
             <span className="text-med-cyan font-black text-xs tracking-widest uppercase">Family Care</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold mb-4">가족간병 신청</h2>
-          <p className="text-slate-400 text-base">
+          <p className="text-slate-400 text-base mb-6">
             가족이 직접 간병하시는 경우 필요한 행정 지원 및 교육 신청을 위한 양식입니다.
           </p>
+          
+          <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-5 text-left inline-block max-w-xl mx-auto backdrop-blur-sm">
+            <div className="flex items-start gap-4">
+              <div className="bg-amber-500/20 p-2 rounded-full hidden sm:block">
+                <Info className="w-5 h-5 text-amber-400" />
+              </div>
+              <div>
+                <h4 className="text-amber-400 font-bold text-base mb-2 flex items-center gap-2">
+                  <span className="sm:hidden"><Info className="w-4 h-4" /></span>
+                  신청 전 반드시 확인해 주세요!
+                </h4>
+                <p className="text-amber-100/80 text-sm leading-relaxed">
+                  가족간병 신청은 <strong className="text-amber-300">입원 전 1회</strong>, <strong className="text-amber-300">퇴원 후 1회</strong> 총 <span className="underline decoration-amber-500/50 underline-offset-4 font-bold text-white">두 번 필수적으로 신청</span>하셔야 정상 처리가 가능합니다.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <motion.div 
