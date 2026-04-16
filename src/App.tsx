@@ -19,7 +19,10 @@ import {
   Info,
   UserPlus,
   ShoppingBag,
-  Plus
+  Plus,
+  Quote,
+  Award,
+  Briefcase
 } from 'lucide-react';
 
 const Navbar = ({ currentSection, setCurrentSection }: { currentSection: number, setCurrentSection: (idx: number) => void }) => {
@@ -35,11 +38,12 @@ const Navbar = ({ currentSection, setCurrentSection }: { currentSection: number,
   // 상담 신청을 첫 번째 섹션으로 배치하여 전환율 극대화
   const navLinks = [
     { name: '홈', index: 0 },
-    { name: '간병인등록', index: 1 },
-    { name: '가족간병신청', index: 2 },
-    { name: '노인장기요양', index: 3 },
-    { name: '후기', index: 4 },
-    { name: '상담 신청', index: 5 },
+    { name: '소개', index: 1 },
+    { name: '간병인등록', index: 2 },
+    { name: '가족간병신청', index: 3 },
+    { name: '노인장기요양', index: 4 },
+    { name: '후기', index: 5 },
+    { name: '상담 신청', index: 6 },
   ];
 
   const handleNavClick = (e: any, index: number) => {
@@ -158,6 +162,186 @@ const Hero = () => {
           </div>
           <span className="text-[#3C1E1E] text-[7px] sm:text-[10px] md:text-xs font-black">상담하기</span>
         </motion.a>
+      </div>
+    </section>
+  );
+};
+
+// 소개 섹션 — 다크 네이비 + 골드 액센트, 원페이지 레이아웃
+const CeoIntroduction = () => {
+  const gold = '#C9A96E';
+
+  return (
+    <section className="h-full overflow-hidden"
+      style={{ background: 'linear-gradient(135deg, #0a1628 0%, #0f2035 40%, #132a42 100%)' }}
+    >
+      <div className="h-full flex items-center px-6 md:px-10 relative">
+
+        {/* 배경 장식 */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-[0.04]"
+          style={{ background: `radial-gradient(circle, ${gold} 0%, transparent 70%)` }}
+        />
+
+        <div className="max-w-6xl mx-auto w-full relative z-10">
+          <div className="grid lg:grid-cols-5 gap-8 lg:gap-14 items-center">
+
+            {/* 왼쪽: 프로필 영역 */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: 'easeOut' }}
+              className="lg:col-span-2 flex flex-col items-center"
+            >
+              {/* 프로필 사진 */}
+              <div className="relative w-full max-w-[220px] lg:max-w-[240px] mx-auto">
+                <div className="absolute -inset-2 rounded-[1.6rem] opacity-20 blur-lg"
+                  style={{ background: `linear-gradient(135deg, ${gold}, transparent 60%)` }}
+                />
+                <div className="relative rounded-[1.5rem] p-[2px] overflow-hidden"
+                  style={{ background: `linear-gradient(160deg, ${gold} 0%, rgba(201,169,110,0.3) 50%, ${gold} 100%)` }}
+                >
+                  <div className="rounded-[1.4rem] overflow-hidden bg-[#0f1d30]">
+                    <img
+                      src="/ceo-profile.png"
+                      alt="클라우드나인메디케어 대표 이운희"
+                      className="w-full aspect-[3/4] object-cover object-top"
+                    />
+                    <div className="absolute bottom-0 left-0 right-0 h-1/4"
+                      style={{ background: 'linear-gradient(to top, rgba(10,22,40,0.85) 0%, transparent 100%)' }}
+                    />
+                  </div>
+                </div>
+
+                {/* 이름 배지 */}
+                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2"
+                  style={{
+                    background: 'linear-gradient(135deg, #0f2035 0%, #1a3050 100%)',
+                    border: `1.5px solid ${gold}`,
+                    borderRadius: '0.8rem',
+                    padding: '6px 20px',
+                    boxShadow: '0 6px 20px rgba(0,0,0,0.4)'
+                  }}
+                >
+                  <p className="text-sm font-black text-white whitespace-nowrap tracking-wide text-center">이 운 희</p>
+                  <p className="text-[9px] font-bold text-center tracking-[0.12em]"
+                    style={{ color: gold }}
+                  >CLOUDNINE MEDICARE CEO</p>
+                </div>
+              </div>
+
+              {/* 지표 카드 */}
+              <div className="grid grid-cols-3 gap-2.5 mt-10 w-full max-w-[260px]">
+                {[
+                  { value: '2만+', label: '전문 인력' },
+                  { value: '24h', label: '연중무휴' },
+                  { value: '98%', label: '만족도' },
+                ].map((stat, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 + i * 0.1 }}
+                    className="text-center py-3 px-1.5 rounded-lg"
+                    style={{
+                      background: 'rgba(255,255,255,0.03)',
+                      border: '1px solid rgba(255,255,255,0.06)',
+                    }}
+                  >
+                    <p className="text-base font-black tracking-tight" style={{ color: gold }}>{stat.value}</p>
+                    <p className="text-[9px] font-bold text-slate-400 mt-0.5 tracking-wider uppercase">{stat.label}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* 오른쪽: 인사말 영역 */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: 'easeOut', delay: 0.12 }}
+              className="lg:col-span-3"
+            >
+              {/* 따옴표 아이콘 */}
+              <Quote className="w-9 h-9 opacity-25 mb-3" style={{ color: gold }} />
+
+              {/* 헤드라인 */}
+              <h2 className="text-xl md:text-2xl lg:text-3xl font-black text-white leading-[1.35] mb-5 tracking-tight">
+                시니어 케어의 새로운 기준,<br />
+                <span style={{ color: gold }}>클라우드나인메디케어</span>가 만듭니다
+              </h2>
+
+              {/* 인사말 본문 */}
+              <div className="space-y-3 text-slate-300 text-[13px] md:text-sm leading-[1.85] font-medium mb-5">
+                <p>
+                  <strong className="text-white">클라우드나인메디케어 대표 이운희</strong>입니다.
+                </p>
+                <p>
+                  우리는 전문화된 인력 관리와 차별화된 프로세스를 통해 <strong className="text-white">시니어 라이프의 질을 높이는 데</strong> 전념하고 있습니다.
+                </p>
+              </div>
+
+              {/* 핵심 서비스 카드 */}
+              <div className="space-y-2.5 mb-5">
+                {[
+                  { title: '전문 간병 및 방문요양', desc: '엄격한 기준으로 선발된 요양보호사와 간병인 매칭', icon: <Heart className="w-4 h-4" /> },
+                  { title: '등급 신청 토탈 케어', desc: '복잡한 노인장기요양등급 신청의 처음부터 끝까지 밀착 지원', icon: <FileText className="w-4 h-4" /> },
+                  { title: '치매 예방 솔루션', desc: '지역 주민을 위한 치매 무료 검사 실시 및 사후 관리 연계', icon: <Activity className="w-4 h-4" /> },
+                ].map((item, i) => (
+                  <div key={i} className="flex gap-3 items-start p-3 rounded-xl"
+                    style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}
+                  >
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
+                      style={{ background: `rgba(201,169,110,0.15)`, color: gold }}
+                    >
+                      {item.icon}
+                    </div>
+                    <div>
+                      <p className="text-[13px] font-bold text-white mb-0.5">{item.title}</p>
+                      <p className="text-[11.5px] text-slate-400 leading-[1.6]">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* 마무리 인사말 */}
+              <p className="text-slate-300 text-[13px] md:text-sm leading-[1.85] font-medium mb-5">
+                전문성은 기본이며, <strong style={{ color: gold }}>정직과 신뢰</strong>는 저희의 가장 큰 자산입니다. 클라우드나인메디케어는 어르신들의 건강한 미소와 가족의 행복을 위해 <strong className="text-white">항상 현장에서 발로 뛰겠습니다.</strong>
+              </p>
+
+              {/* 서명 + 대표번호 */}
+              <div className="pt-4" style={{ borderTop: '1px solid rgba(201,169,110,0.15)' }}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center"
+                      style={{ background: `linear-gradient(135deg, ${gold}, #a88a55)`, boxShadow: '0 4px 16px rgba(201,169,110,0.2)' }}
+                    >
+                      <Briefcase className="w-4 h-4 text-[#0a1628]" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-black text-white tracking-wide">이운희</p>
+                      <p className="text-[10px] font-bold" style={{ color: gold }}>클라우드나인메디케어 대표</p>
+                    </div>
+                  </div>
+
+                  {/* 대표번호 */}
+                  <a href="tel:1688-9739" className="flex items-center gap-2 px-4 py-2 rounded-xl transition-colors group"
+                    style={{ background: 'rgba(201,169,110,0.08)', border: '1px solid rgba(201,169,110,0.15)' }}
+                  >
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: gold }}>
+                      <svg className="w-3 h-3 text-[#0a1628]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-[9px] font-bold text-slate-500 tracking-wider uppercase">대표번호</p>
+                      <p className="text-sm font-black tracking-wide group-hover:underline" style={{ color: gold }}>1688-9739</p>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -533,7 +717,7 @@ const LongTermCare = ({ onNavigate }: { onNavigate: (idx: number) => void }) => 
       title: "노인장기요양등급신청",
       desc: "복잡한 등급 신청 절차를 전문가가 무료로 도와드립니다.",
       icon: <FileText className="w-8 h-8 text-med-cyan" />,
-      action: () => onNavigate(5)
+      action: () => onNavigate(6)
     },
     {
       title: "노인장기요양등급안내",
@@ -787,7 +971,7 @@ const Footer = ({ onNavigate }: { onNavigate?: (idx: number) => void }) => {
           
           <div className="flex gap-6 text-[10px] font-bold">
             <a href="#" className="hover:text-med-cyan transition-colors">이용약관</a>
-            <button onClick={() => onNavigate && onNavigate(6)} className="hover:text-med-cyan transition-colors cursor-pointer">개인정보처리방침</button>
+            <button onClick={() => onNavigate && onNavigate(7)} className="hover:text-med-cyan transition-colors cursor-pointer">개인정보처리방침</button>
             <a href="#" className="hover:text-med-cyan transition-colors">고객센터</a>
           </div>
 
@@ -1143,7 +1327,7 @@ const PrivacyPolicy = () => {
 
 export default function App() {
   // 섹션별 고유 해시 — URL로 직접 접근 가능
-  const sectionHashes = ['home', 'registration', 'family', 'longterm', 'reviews', 'consultation', 'privacy'];
+  const sectionHashes = ['home', 'ceo', 'registration', 'family', 'longterm', 'reviews', 'consultation', 'privacy'];
 
   // URL 해시에서 초기 섹션 결정
   const getInitialSection = () => {
@@ -1179,6 +1363,7 @@ export default function App() {
   // 홈이 첫 화면, 상담 신청이 마지막
   const sections = [
     <Hero />,
+    <CeoIntroduction />,
     <RegistrationForm />,
     <FamilyCareForm />,
     <LongTermCare onNavigate={handleSetSection} />,
