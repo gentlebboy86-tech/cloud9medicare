@@ -194,38 +194,29 @@ const CeoIntroduction = () => {
             >
               {/* 프로필 사진 */}
               <div className="relative w-full max-w-[220px] lg:max-w-[240px] mx-auto">
-                <div className="absolute -inset-2 rounded-[1.6rem] opacity-20 blur-lg"
-                  style={{ background: `linear-gradient(135deg, ${gold}, transparent 60%)` }}
+                {/* 투명 배경(누끼) 사진 뒤에서 은은하게 뿜어져 나오는 후광 효과 */}
+                <div className="absolute -inset-4 rounded-[2rem] opacity-60 blur-2xl z-0"
+                  style={{ background: `radial-gradient(circle, rgba(201,169,110,0.3) 0%, transparent 60%)` }}
                 />
-                <div className="relative rounded-[1.5rem] p-[2px] overflow-hidden"
-                  style={{ background: `linear-gradient(160deg, ${gold} 0%, rgba(201,169,110,0.3) 50%, ${gold} 100%)` }}
-                >
-                  <div className="rounded-[1.4rem] overflow-hidden bg-[#0f1d30]">
-                    <img
-                      src="/ceo-profile.png"
-                      alt="클라우드나인메디케어 대표 이운희"
-                      className="w-full aspect-[3/4] object-cover object-top"
-                    />
-                    <div className="absolute bottom-0 left-0 right-0 h-1/4"
-                      style={{ background: 'linear-gradient(to top, rgba(10,22,40,0.85) 0%, transparent 100%)' }}
-                    />
-                  </div>
+                <div className="relative rounded-[1.5rem] w-full max-w-[240px] aspect-[3/4] overflow-visible flex items-end justify-center z-10 group">
+                  <img
+                    src="/ceo-profile.png"
+                    alt="클라우드나인메디케어 대표 이운희"
+                    className="w-full h-full object-cover object-top drop-shadow-2xl transition-all duration-700"
+                    style={{ 
+                      filter: 'contrast(102%) brightness(95%)',
+                      WebkitMaskImage: 'linear-gradient(to bottom, black 75%, transparent 100%)',
+                      maskImage: 'linear-gradient(to bottom, black 75%, transparent 100%)'
+                    }}
+                  />
                 </div>
 
-                {/* 이름 배지 */}
-                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2"
-                  style={{
-                    background: 'linear-gradient(135deg, #0f2035 0%, #1a3050 100%)',
-                    border: `1.5px solid ${gold}`,
-                    borderRadius: '0.8rem',
-                    padding: '6px 20px',
-                    boxShadow: '0 6px 20px rgba(0,0,0,0.4)'
-                  }}
-                >
-                  <p className="text-sm font-black text-white whitespace-nowrap tracking-wide text-center">이 운 희</p>
-                  <p className="text-[9px] font-bold text-center tracking-[0.12em]"
+                {/* 이름 텍스트 (박스 제거) */}
+                <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 z-20 w-full">
+                  <p className="text-base font-black text-white whitespace-nowrap tracking-widest text-center drop-shadow-lg">이 운 희</p>
+                  <p className="text-[10px] font-bold text-center tracking-[0.2em] mt-1 drop-shadow-lg"
                     style={{ color: gold }}
-                  >CLOUDNINE MEDICARE CEO</p>
+                  >CLOUD9 MEDICARE CEO</p>
                 </div>
               </div>
 
