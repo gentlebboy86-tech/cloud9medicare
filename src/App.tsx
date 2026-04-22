@@ -339,20 +339,34 @@ const CeoIntroduction = () => {
 };
 
 const RegistrationForm = () => {
-  const [formData, setFormData] = useState({
+  const [activeTab, setActiveTab] = useState<'find' | 'register'>('find');
+
+  // 간병인 등록 폼 상태
+  const [regData, setRegData] = useState({
     name: '',
     residentId: '',
     address: ''
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
+  const [isRegSubmitting, setIsRegSubmitting] = useState(false);
+  const [regSuccess, setRegSuccess] = useState(false);
+  const [regError, setRegError] = useState('');
 
-  // FormSubmit API를 통해 간병인 등록 신청을 이메일로 전송
-  const handleSubmit = (e: any) => {
+  // 간병인 찾기 폼 상태
+  const [findData, setFindData] = useState({
+    patientName: '',
+    phone: '',
+    hospital: '',
+    expectedPeriod: ''
+  });
+  const [isFindSubmitting, setIsFindSubmitting] = useState(false);
+  const [findSuccess, setFindSuccess] = useState(false);
+  const [findError, setFindError] = useState('');
+
+  // 간병인 등록 제출
+  const handleRegSubmit = (e: any) => {
     e.preventDefault();
-    setErrorMsg('');
-    setIsSubmitting(true);
+    setRegError('');
+    setIsRegSubmitting(true);
 
     fetch("https://formsubmit.co/ajax/steave5873@naver.com", {
       method: "POST",
@@ -361,113 +375,291 @@ const RegistrationForm = () => {
         _subject: "[간병인 등록] 새로운 간병인 등록 신청",
         _template: "table",
         _captcha: "false",
-        "이름": formData.name,
-        "주민등록번호": formData.residentId,
-        "주소": formData.address,
+        "이름": regData.name,
+        "주민등록번호": regData.residentId,
+        "주소": regData.address,
       })
     })
     .then(async (res) => {
       const data = await res.json();
       if (res.ok && data.success) {
-        setSubmitSuccess(true);
-        setFormData({ name: '', residentId: '', address: '' });
-        setTimeout(() => setSubmitSuccess(false), 5000);
+        setRegSuccess(true);
+        setRegData({ name: '', residentId: '', address: '' });
+        setTimeout(() => setRegSuccess(false), 5000);
       } else {
-        setErrorMsg(data.message || '전송에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+        setRegError(data.message || '전송에 실패했습니다. 잠시 후 다시 시도해 주세요.');
       }
     })
-    .catch(() => setErrorMsg('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해 주세요.'))
-    .finally(() => setIsSubmitting(false));
+    .catch(() => setRegError('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해 주세요.'))
+    .finally(() => setIsRegSubmitting(false));
+  };
+
+  // 간병인 찾기 제출
+  const handleFindSubmit = (e: any) => {
+    e.preventDefault();
+    setFindError('');
+    setIsFindSubmitting(true);
+
+    fetch("https://formsubmit.co/ajax/steave5873@naver.com", {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        _subject: "[간병인 찾기] 새로운 간병인 매칭 요청",
+        _template: "table",
+        _captcha: "false",
+        "환자이름": findData.patientName,
+        "전화번호": findData.phone,
+        "병원": findData.hospital,
+        "입원예상기간": findData.expectedPeriod,
+      })
+    })
+    .then(async (res) => {
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setFindSuccess(true);
+        setFindData({ patientName: '', phone: '', hospital: '', expectedPeriod: '' });
+        setTimeout(() => setFindSuccess(false), 5000);
+      } else {
+        setFindError(data.message || '전송에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+      }
+    })
+    .catch(() => setFindError('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해 주세요.'))
+    .finally(() => setIsFindSubmitting(false));
   };
 
   return (
-    <section id="registration" className="h-full flex flex-col justify-center bg-slate-900 text-white px-6">
-      <div className="max-w-4xl mx-auto w-full">
-        <div className="text-center mb-8">
-          <div className="inline-block px-4 py-1 bg-white/10 rounded-full border border-white/20 mb-4">
-            <span className="text-med-cyan font-black text-xs tracking-widest uppercase">Registration</span>
+    <section id="registration" className="relative min-h-[100svh] py-24 md:h-full flex flex-col justify-center overflow-y-auto bg-slate-900 text-white px-6 align-middle">
+      <div className="max-w-4xl mx-auto w-full my-auto">
+        <div className="text-center mb-6 md:mb-8 mt-12 md:mt-0">
+          <div className="inline-block px-4 py-1 bg-white/10 rounded-full border border-white/20 mb-3 md:mb-4">
+            <span className="text-med-cyan font-black text-[10px] md:text-xs tracking-widest uppercase">Caregiver Service</span>
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">간병인 등록 신청</h2>
-          <p className="text-slate-400 text-base">
-            클라우드나인 메디케어와 함께할 전문 간병인을 모집합니다.
+          <h2 className="text-2xl md:text-4xl font-bold mb-3 md:mb-4">간병인 매칭 및 등록</h2>
+          <p className="text-slate-400 text-sm md:text-base">
+            원하시는 서비스를 선택해 주세요.
           </p>
         </div>
 
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white/5 border border-white/10 rounded-3xl p-6 md:p-10 backdrop-blur-sm"
-        >
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">이름</label>
-                <input 
-                  type="text" 
-                  required
-                  placeholder="성함을 입력하세요"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:outline-none focus:border-med-cyan transition-colors"
-                  value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">주민등록번호</label>
-                <input 
-                  type="text" 
-                  required
-                  placeholder="000000-0000000"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:outline-none focus:border-med-cyan transition-colors"
-                  value={formData.residentId}
-                  onChange={(e) => setFormData({...formData, residentId: e.target.value})}
-                />
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">주소</label>
-              <input 
-                type="text" 
-                required
-                placeholder="상세 주소를 입력하세요"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:outline-none focus:border-med-cyan transition-colors"
-                value={formData.address}
-                onChange={(e) => setFormData({...formData, address: e.target.value})}
-              />
-            </div>
+        {/* 탭 버튼 */}
+        <div className="flex bg-white/5 p-1.5 rounded-2xl border border-white/10 mb-6 md:mb-8 max-w-lg mx-auto backdrop-blur-sm">
+          <button 
+            type="button"
+            onClick={() => setActiveTab('find')}
+            className={`flex-1 py-3 md:py-3.5 rounded-xl text-xs md:text-sm font-bold transition-all ${
+              activeTab === 'find' 
+                ? 'bg-med-cyan text-white shadow-lg' 
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            간병인 찾기 <span className="block mt-0.5 md:mt-0 md:inline md:ml-1 text-[10px] md:text-xs opacity-75 font-normal md:font-bold">(환자/보호자용)</span>
+          </button>
+          <button 
+            type="button"
+            onClick={() => setActiveTab('register')}
+            className={`flex-1 py-3 md:py-3.5 rounded-xl text-xs md:text-sm font-bold transition-all ${
+              activeTab === 'register' 
+                ? 'bg-med-cyan text-white shadow-lg' 
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            간병인 등록 <span className="block mt-0.5 md:mt-0 md:inline md:ml-1 text-[10px] md:text-xs opacity-75 font-normal md:font-bold">(구직자용)</span>
+          </button>
+        </div>
 
-            <div className="pt-4">
-              {errorMsg && (
-                <div className="mb-3 text-red-300 text-sm font-bold bg-red-500/10 p-3 rounded-lg border border-red-500/20 text-center">
-                  {errorMsg}
-                </div>
-              )}
-              <button 
-                type="submit"
-                disabled={isSubmitting || submitSuccess}
-                className={`w-full text-white py-4 rounded-xl font-black text-lg transition-all shadow-lg flex items-center justify-center gap-2 ${
-                  submitSuccess
-                    ? 'bg-emerald-500/80'
-                    : isSubmitting
-                      ? 'med-btn-gradient opacity-70 cursor-not-allowed'
-                      : 'med-btn-gradient hover:scale-[1.02]'
-                }`}
+        <div className="relative">
+          <AnimatePresence mode="popLayout">
+            {activeTab === 'find' && (
+              <motion.div 
+                key="find"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+                className="bg-white/5 border border-white/10 rounded-3xl p-5 sm:p-6 md:p-10 backdrop-blur-sm"
               >
-                {submitSuccess ? (
-                  <><CheckCircle2 className="w-5 h-5" /> 등록 신청이 완료되었습니다</>
-                ) : isSubmitting ? (
-                  <><div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> 접수 중...</>
-                ) : (
-                  '등록 신청하기'
-                )}
-              </button>
-            </div>
-          </form>
-          
-          <p className="mt-6 text-center text-slate-500 text-xs">
-            * 수집된 개인정보는 간병인 등록 및 관리 목적으로만 사용되며, 관련 법령에 따라 안전하게 보호됩니다.
-          </p>
-        </motion.div>
+                <div className="mb-6 flex items-start gap-4 p-4 rounded-2xl bg-[#0072BC]/10 border border-[#0072BC]/20">
+                  <Heart className="w-5 h-5 md:w-6 md:h-6 text-[#0072BC] shrink-0 mt-0.5 md:mt-1" />
+                  <div>
+                    <h3 className="text-base md:text-lg font-bold text-white mb-1">최적의 간병인을 찾아드립니다</h3>
+                    <p className="text-xs md:text-sm text-slate-300">내 가족을 돌보는 마음으로, 전문가를 매칭해 드립니다. 아래 정보를 남겨주시면 신속하게 안내해 드리겠습니다.</p>
+                  </div>
+                </div>
+
+                <form onSubmit={handleFindSubmit} className="space-y-4 md:space-y-6">
+                  <div className="grid md:grid-cols-2 gap-4 md:gap-6">
+                    <div className="space-y-1.5 md:space-y-2">
+                      <label className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider">환자 이름</label>
+                      <input 
+                        type="text" 
+                        required
+                        placeholder="환자 성함을 입력하세요"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 md:px-5 md:py-3 text-sm md:text-base text-white focus:outline-none focus:border-med-cyan transition-colors"
+                        value={findData.patientName}
+                        onChange={(e) => setFindData({...findData, patientName: e.target.value})}
+                      />
+                    </div>
+                    <div className="space-y-1.5 md:space-y-2">
+                      <label className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider">전화번호</label>
+                      <input 
+                        type="tel" 
+                        required
+                        placeholder="연락 가능하신 번호 (예: 010-0000-0000)"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 md:px-5 md:py-3 text-sm md:text-base text-white focus:outline-none focus:border-med-cyan transition-colors"
+                        value={findData.phone}
+                        onChange={(e) => setFindData({...findData, phone: e.target.value})}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="grid md:grid-cols-2 gap-4 md:gap-6">
+                    <div className="space-y-1.5 md:space-y-2">
+                      <label className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider">병원</label>
+                      <input 
+                        type="text" 
+                        required
+                        placeholder="입원 중이거나 예정인 병원명"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 md:px-5 md:py-3 text-sm md:text-base text-white focus:outline-none focus:border-med-cyan transition-colors"
+                        value={findData.hospital}
+                        onChange={(e) => setFindData({...findData, hospital: e.target.value})}
+                      />
+                    </div>
+                    <div className="space-y-1.5 md:space-y-2">
+                      <label className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider">입원예상기간</label>
+                      <input 
+                        type="text" 
+                        required
+                        placeholder="예: 2주, 1개월 등"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 md:px-5 md:py-3 text-sm md:text-base text-white focus:outline-none focus:border-med-cyan transition-colors"
+                        value={findData.expectedPeriod}
+                        onChange={(e) => setFindData({...findData, expectedPeriod: e.target.value})}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="pt-2 md:pt-4">
+                    {findError && (
+                      <div className="mb-3 text-red-300 text-xs md:text-sm font-bold bg-red-500/10 p-3 rounded-lg border border-red-500/20 text-center">
+                        {findError}
+                      </div>
+                    )}
+                    <button 
+                      type="submit"
+                      disabled={isFindSubmitting || findSuccess}
+                      className={`w-full text-white py-3 md:py-4 rounded-xl font-black text-base md:text-lg transition-all shadow-lg flex items-center justify-center gap-2 ${
+                        findSuccess
+                          ? 'bg-emerald-500/80'
+                          : isFindSubmitting
+                            ? 'med-btn-gradient opacity-70 cursor-not-allowed'
+                            : 'med-btn-gradient hover:scale-[1.02]'
+                      }`}
+                    >
+                      {findSuccess ? (
+                        <><CheckCircle2 className="w-4 h-4 md:w-5 md:h-5" /> 간병인 찾기 신청 완료</>
+                      ) : isFindSubmitting ? (
+                        <><div className="w-4 h-4 md:w-5 md:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> 접수 중...</>
+                      ) : (
+                        '간병인 매칭 신청하기'
+                      )}
+                    </button>
+                  </div>
+                </form>
+                
+                <p className="mt-4 md:mt-6 text-center text-slate-500 text-[10px] md:text-xs">
+                  * 수집된 개인정보는 간병인 매칭 목적으로만 사용되며, 법령에 따라 안전하게 보호됩니다.
+                </p>
+              </motion.div>
+            )}
+
+            {activeTab === 'register' && (
+              <motion.div 
+                key="register"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+                className="bg-white/5 border border-white/10 rounded-3xl p-5 sm:p-6 md:p-10 backdrop-blur-sm"
+              >
+                <div className="mb-6 flex items-start gap-4 p-4 rounded-2xl bg-[#C9A96E]/10 border border-[#C9A96E]/20">
+                  <UserPlus className="w-5 h-5 md:w-6 md:h-6 text-[#C9A96E] shrink-0 mt-0.5 md:mt-1" />
+                  <div>
+                    <h3 className="text-base md:text-lg font-bold text-white mb-1">클라우드나인 메디케어와 함께하세요</h3>
+                    <p className="text-xs md:text-sm text-slate-300">최고의 대우와 체계적인 관리로 간병인 여러분의 프로페셔널한 커리어를 지원합니다.</p>
+                  </div>
+                </div>
+
+                <form onSubmit={handleRegSubmit} className="space-y-4 md:space-y-6">
+                  <div className="grid md:grid-cols-2 gap-4 md:gap-6">
+                    <div className="space-y-1.5 md:space-y-2">
+                      <label className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider">이름</label>
+                      <input 
+                        type="text" 
+                        required
+                        placeholder="성함을 입력하세요"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 md:px-5 md:py-3 text-sm md:text-base text-white focus:outline-none focus:border-med-cyan transition-colors"
+                        value={regData.name}
+                        onChange={(e) => setRegData({...regData, name: e.target.value})}
+                      />
+                    </div>
+                    <div className="space-y-1.5 md:space-y-2">
+                      <label className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider">주민등록번호</label>
+                      <input 
+                        type="text" 
+                        required
+                        placeholder="000000-0000000"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 md:px-5 md:py-3 text-sm md:text-base text-white focus:outline-none focus:border-med-cyan transition-colors"
+                        value={regData.residentId}
+                        onChange={(e) => setRegData({...regData, residentId: e.target.value})}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-1.5 md:space-y-2">
+                    <label className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider">주소</label>
+                    <input 
+                      type="text" 
+                      required
+                      placeholder="상세 주소를 입력하세요"
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 md:px-5 md:py-3 text-sm md:text-base text-white focus:outline-none focus:border-med-cyan transition-colors"
+                      value={regData.address}
+                      onChange={(e) => setRegData({...regData, address: e.target.value})}
+                    />
+                  </div>
+
+                  <div className="pt-2 md:pt-4">
+                    {regError && (
+                      <div className="mb-3 text-red-300 text-xs md:text-sm font-bold bg-red-500/10 p-3 rounded-lg border border-red-500/20 text-center">
+                        {regError}
+                      </div>
+                    )}
+                    <button 
+                      type="submit"
+                      disabled={isRegSubmitting || regSuccess}
+                      className={`w-full text-white py-3 md:py-4 rounded-xl font-black text-base md:text-lg transition-all shadow-lg flex items-center justify-center gap-2 ${
+                        regSuccess
+                          ? 'bg-emerald-500/80'
+                          : isRegSubmitting
+                            ? 'med-btn-gradient opacity-70 cursor-not-allowed'
+                            : 'med-btn-gradient hover:scale-[1.02]'
+                      }`}
+                    >
+                      {regSuccess ? (
+                        <><CheckCircle2 className="w-4 h-4 md:w-5 md:h-5" /> 등록 신청 완료</>
+                      ) : isRegSubmitting ? (
+                        <><div className="w-4 h-4 md:w-5 md:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> 접수 중...</>
+                      ) : (
+                        '간병인 등록 신청하기'
+                      )}
+                    </button>
+                  </div>
+                </form>
+                
+                <p className="mt-4 md:mt-6 text-center text-slate-500 text-[10px] md:text-xs">
+                  * 수집된 개인정보는 간병인 등록 관리 목적으로만 사용되며, 법령에 따라 안전하게 보호됩니다.
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </section>
   );
