@@ -25,6 +25,13 @@ import {
   Briefcase
 } from 'lucide-react';
 
+const formatPhoneNumber = (value: string) => {
+  const digits = value.replace(/\D/g, '');
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7, 11)}`;
+};
+
 const Navbar = ({ currentSection, setCurrentSection }: { currentSection: number, setCurrentSection: (idx: number) => void }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -200,7 +207,7 @@ const CeoIntroduction = () => {
                 />
                 <div className="relative rounded-[1.5rem] w-full max-w-[240px] aspect-[3/4] overflow-visible flex items-end justify-center z-10 group">
                   <img
-                    src="/ceo-profile.png"
+                    src="/ceo-profile-v2.png"
                     alt="클라우드나인메디케어 대표 이운희"
                     className="w-full h-full object-cover object-top drop-shadow-2xl transition-all duration-700"
                     style={{ 
@@ -506,7 +513,8 @@ const RegistrationForm = () => {
                         placeholder="연락 가능하신 번호 (예: 010-0000-0000)"
                         className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 md:px-5 md:py-3 text-sm md:text-base text-white focus:outline-none focus:border-med-cyan transition-colors"
                         value={findData.phone}
-                        onChange={(e) => setFindData({...findData, phone: e.target.value})}
+                        onChange={(e) => setFindData({...findData, phone: formatPhoneNumber(e.target.value)})}
+                        maxLength={13}
                       />
                     </div>
                   </div>
@@ -696,9 +704,9 @@ const FamilyCareForm = () => {
         _captcha: "false",
         "환자 이름": formData.patientName,
         "환자 생년월일": formData.patientBirth,
-        "보호자 이름": formData.guardianName,
-        "보호자 주민번호": formData.guardianResidentId,
-        "보호자 전화번호": formData.guardianPhone,
+        "보호자(간병인) 이름": formData.guardianName,
+        "보호자(간병인) 주민번호": formData.guardianResidentId,
+        "보호자(간병인) 전화번호": formData.guardianPhone,
         "병원명": formData.hospitalName,
         "간병 기간": formData.stayPeriod,
         "간병비 금액": formData.careFee,
@@ -792,7 +800,7 @@ const FamilyCareForm = () => {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">보호자 주민번호</label>
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">보호자(간병인) 주민번호</label>
                 <input 
                   type="text" 
                   required
@@ -806,14 +814,15 @@ const FamilyCareForm = () => {
 
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">보호자 전화번호</label>
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">보호자(간병인) 전화번호</label>
                 <input 
                   type="tel" 
                   required
                   placeholder="010-0000-0000"
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:outline-none focus:border-med-cyan transition-colors"
                   value={formData.guardianPhone}
-                  onChange={(e) => setFormData({...formData, guardianPhone: e.target.value})}
+                  onChange={(e) => setFormData({...formData, guardianPhone: formatPhoneNumber(e.target.value)})}
+                  maxLength={13}
                 />
               </div>
               <div className="space-y-2">
