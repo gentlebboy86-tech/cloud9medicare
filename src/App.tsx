@@ -179,10 +179,10 @@ const CeoIntroduction = () => {
   const gold = '#C9A96E';
 
   return (
-    <section className="h-full overflow-hidden"
+    <section className="min-h-full overflow-y-auto py-20 md:py-0 md:h-full"
       style={{ background: 'linear-gradient(135deg, #0a1628 0%, #0f2035 40%, #132a42 100%)' }}
     >
-      <div className="h-full flex items-center px-6 md:px-10 relative">
+      <div className="min-h-full flex items-center px-4 sm:px-6 md:px-10 relative">
 
         {/* 배경 장식 */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-[0.04]"
@@ -199,36 +199,45 @@ const CeoIntroduction = () => {
               transition={{ duration: 0.7, ease: 'easeOut' }}
               className="lg:col-span-2 flex flex-col items-center"
             >
-              {/* 프로필 사진 */}
-              <div className="relative w-full max-w-[220px] lg:max-w-[240px] mx-auto">
-                {/* 투명 배경(누끼) 사진 뒤에서 은은하게 뿜어져 나오는 후광 효과 */}
-                <div className="absolute -inset-4 rounded-[2rem] opacity-60 blur-2xl z-0"
-                  style={{ background: `radial-gradient(circle, rgba(201,169,110,0.3) 0%, transparent 60%)` }}
+              {/* 프로필 사진 및 서명 영역 */}
+              <div className="relative w-full max-w-[200px] sm:max-w-[250px] lg:max-w-[300px] mx-auto mb-14 sm:mb-16 lg:mb-12">
+                {/* 후광 효과 */}
+                <div className="absolute -inset-8 rounded-[3rem] opacity-40 blur-3xl z-0"
+                  style={{ background: `radial-gradient(circle, rgba(201,169,110,0.35) 0%, transparent 60%)` }}
                 />
-                <div className="relative rounded-[1.5rem] w-full max-w-[240px] aspect-[3/4] overflow-visible flex items-end justify-center z-10 group">
-                  <img
-                    src="/ceo-profile-v2.png"
-                    alt="클라우드나인메디케어 대표 이운희"
-                    className="w-full h-full object-cover object-top drop-shadow-2xl transition-all duration-700"
-                    style={{ 
-                      filter: 'contrast(102%) brightness(95%)',
-                      WebkitMaskImage: 'linear-gradient(to bottom, black 75%, transparent 100%)',
-                      maskImage: 'linear-gradient(to bottom, black 75%, transparent 100%)'
-                    }}
-                  />
-                </div>
+                
+                {/* 프로필 사진 */}
+                <div className="relative w-full flex flex-col items-center z-10">
+                  <div className="w-full max-w-[250px] group">
+                    <div className="relative rounded-2xl overflow-hidden">
+                      <img
+                        src="/ceo-profile-v2.png"
+                        alt="클라우드나인메디케어 대표 이운희"
+                        className="w-full h-auto object-cover transition-all duration-700"
+                        style={{ 
+                          filter: 'contrast(105%) brightness(97%)',
+                          WebkitMaskImage: 'linear-gradient(to bottom, black 50%, transparent 100%), linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
+                          WebkitMaskComposite: 'destination-in',
+                          maskImage: 'linear-gradient(to bottom, black 50%, transparent 100%), linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
+                          maskComposite: 'intersect'
+                        }}
+                      />
+                    </div>
+                  </div>
 
-                {/* 이름 텍스트 (박스 제거) */}
-                <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 z-20 w-full">
-                  <p className="text-base font-black text-white whitespace-nowrap tracking-widest text-center drop-shadow-lg">이 운 희</p>
-                  <p className="text-[10px] font-bold text-center tracking-[0.2em] mt-1 drop-shadow-lg"
-                    style={{ color: gold }}
-                  >CLOUD9 MEDICARE CEO</p>
+                  {/* 직함 + 이름 */}
+                  <div className="absolute -bottom-10 w-full flex flex-col items-center z-20">
+                    <div className="flex items-baseline gap-3">
+                      <span className="text-[11px] font-bold tracking-[0.3em] uppercase"
+                            style={{ color: '#C9A96E' }}>대표이사</span>
+                      <span className="text-xl font-black text-white tracking-[0.35em] drop-shadow-md">이운희</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
               {/* 지표 카드 */}
-              <div className="grid grid-cols-3 gap-2.5 mt-10 w-full max-w-[260px]">
+              <div className="grid grid-cols-3 gap-2 sm:gap-2.5 mt-6 sm:mt-10 w-full max-w-[260px]">
                 {[
                   { value: '2만+', label: '전문 인력' },
                   { value: '24h', label: '연중무휴' },
@@ -308,7 +317,7 @@ const CeoIntroduction = () => {
 
               {/* 서명 + 대표번호 */}
               <div className="pt-4" style={{ borderTop: '1px solid rgba(201,169,110,0.15)' }}>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg flex items-center justify-center"
                       style={{ background: `linear-gradient(135deg, ${gold}, #a88a55)`, boxShadow: '0 4px 16px rgba(201,169,110,0.2)' }}
