@@ -15,6 +15,8 @@ import {
   Coffee,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
   FileText,
   Info,
   UserPlus,
@@ -22,7 +24,10 @@ import {
   Plus,
   Quote,
   Award,
-  Briefcase
+  Briefcase,
+  HelpCircle,
+  Building,
+  ClipboardCheck
 } from 'lucide-react';
 
 const formatPhoneNumber = (value: string) => {
@@ -32,9 +37,44 @@ const formatPhoneNumber = (value: string) => {
   return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7, 11)}`;
 };
 
+// 대표님의 4대 대메뉴 구성안 데이터
+const menuConfig = [
+  {
+    name: '소개',
+    subItems: [
+      { name: '회사 소개', index: 1, desc: '클라우드나인 메디케어 정체성' },
+      { name: '이용 안내', index: 2, desc: '서비스 이용 및 장기요양 혜택' }
+    ]
+  },
+  {
+    name: '간병·요양 서비스',
+    subItems: [
+      { name: '간병인 등록', index: 3, desc: '구직 요양보호사 및 간병인 등록' },
+      { name: '가족간병 신청', index: 4, desc: '가족 직접 간병 행정 및 급여 신청' }
+    ]
+  },
+  {
+    name: '창업 컨설팅',
+    subItems: [
+      { name: '센터 창업 안내', index: 5, desc: '가맹 창업 절차 및 혜택 안내' },
+      { name: '지정제 심사 가이드', index: 6, desc: '신규 지정제 심사 통과 솔루션' }
+    ]
+  },
+  {
+    name: '고객센터',
+    subItems: [
+      { name: '후기', index: 7, desc: '보호자님들의 진심 어린 소감' },
+      { name: '자주 묻는 질문', index: 8, desc: '자주 묻는 질문 해결 센터' },
+      { name: '상담 신청', index: 9, desc: '전문 간호사 1:1 맞춤 상담 신청' }
+    ]
+  }
+];
+
 const Navbar = ({ currentSection, setCurrentSection }: { currentSection: number, setCurrentSection: (idx: number) => void }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [mobileAccordion, setMobileAccordion] = useState<string | null>(null);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -42,43 +82,81 @@ const Navbar = ({ currentSection, setCurrentSection }: { currentSection: number,
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // 상담 신청을 첫 번째 섹션으로 배치하여 전환율 극대화
-  const navLinks = [
-    { name: '홈', index: 0 },
-    { name: '소개', index: 1 },
-    { name: '간병인등록', index: 2 },
-    { name: '가족간병신청', index: 3 },
-    { name: '노인장기요양', index: 4 },
-    { name: '후기', index: 5 },
-    { name: '상담 신청', index: 6 },
-  ];
-
   const handleNavClick = (e: any, index: number) => {
     e.preventDefault();
     setCurrentSection(index);
     setMobileMenuOpen(false);
+    setActiveDropdown(null);
+    setMobileAccordion(null);
+  };
+
+  const isSubItemActive = (subItems: { index: number }[]) => {
+    return subItems.some(item => item.index === currentSection);
   };
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled || currentSection !== 0 ? 'bg-white/95 backdrop-blur-md shadow-sm py-2' : 'bg-white py-3'}`}>
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="flex justify-between items-center">
-          <div className="flex items-center cursor-pointer" onClick={() => setCurrentSection(0)}>
+          {/* 로고 클릭 시 홈(Index 0)으로 이동 */}
+          <div className="flex items-center cursor-pointer" onClick={() => handleNavClick({ preventDefault: () => {} }, 0)}>
             <div className="flex items-center gap-4">
               <img src="/logo.png" alt="클라우드나인 메디케어 로고" className="h-32 -my-8 object-contain" />
               <span className="text-base font-black tracking-tight text-[#0072BC]">클라우드나인 메디케어</span>
             </div>
           </div>
 
-          <div className="hidden lg:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <button 
-                key={link.name} 
-                onClick={(e) => handleNavClick(e, link.index)}
-                className={`text-[18px] font-bold transition-colors tracking-tight ${currentSection === link.index ? 'text-[#0072BC]' : 'text-[#1a1a1a] hover:text-[#0072BC]'}`}
+          {/* 데스크톱 대메뉴 네비게이션 */}
+          <div className="hidden lg:flex items-center gap-10">
+            {menuConfig.map((menu) => (
+              <div 
+                key={menu.name}
+                className="relative py-4"
+                onMouseEnter={() => setActiveDropdown(menu.name)}
+                onMouseLeave={() => setActiveDropdown(null)}
               >
-                {link.name}
-              </button>
+                <button 
+                  className={`text-[17px] font-extrabold flex items-center gap-1.5 transition-colors tracking-tight ${
+                    isSubItemActive(menu.subItems) || activeDropdown === menu.name
+                      ? 'text-[#0072BC]' 
+                      : 'text-[#1a1a1a] hover:text-[#0072BC]'
+                  }`}
+                >
+                  {menu.name}
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${activeDropdown === menu.name ? 'rotate-180' : ''}`} />
+                </button>
+
+                {/* 마우스 호버 시 드롭다운 메뉴 */}
+                <AnimatePresence>
+                  {activeDropdown === menu.name && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.98 }}
+                      transition={{ duration: 0.2, ease: 'easeOut' }}
+                      className="absolute left-1/2 -translate-x-1/2 top-full mt-1 w-64 bg-white/95 backdrop-blur-xl border border-slate-100 rounded-2xl shadow-2xl p-3 z-50"
+                      style={{ boxShadow: '0 20px 40px -15px rgba(0,0,0,0.12)' }}
+                    >
+                      <div className="space-y-1">
+                        {menu.subItems.map((subItem) => (
+                          <button
+                            key={subItem.name}
+                            onClick={(e) => handleNavClick(e, subItem.index)}
+                            className={`w-full text-left px-4 py-3 rounded-xl transition-all flex flex-col ${
+                              currentSection === subItem.index
+                                ? 'bg-[#0072BC]/5 text-[#0072BC]'
+                                : 'hover:bg-slate-50 text-slate-700 hover:text-[#0072BC]'
+                            }`}
+                          >
+                            <span className="text-sm font-bold">{subItem.name}</span>
+                            <span className="text-[11px] text-slate-400 font-medium mt-0.5">{subItem.desc}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             ))}
           </div>
 
@@ -91,6 +169,7 @@ const Navbar = ({ currentSection, setCurrentSection }: { currentSection: number,
         </div>
       </div>
 
+      {/* 모바일 햄버거 메뉴 및 아코디언 */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div 
@@ -99,15 +178,40 @@ const Navbar = ({ currentSection, setCurrentSection }: { currentSection: number,
             exit={{ opacity: 0, y: -20 }}
             className="lg:hidden bg-white border-t border-slate-100 overflow-hidden"
           >
-            <div className="px-6 py-8 space-y-6">
-              {navLinks.map((link) => (
-                <button 
-                  key={link.name} 
-                  onClick={(e) => handleNavClick(e, link.index)}
-                  className={`block w-full text-left text-xl font-bold ${currentSection === link.index ? 'text-[#0072BC]' : 'text-slate-900'}`}
-                >
-                  {link.name}
-                </button>
+            <div className="px-6 py-6 space-y-4">
+              {menuConfig.map((menu) => (
+                <div key={menu.name} className="border-b border-slate-50 pb-3">
+                  <button
+                    onClick={() => setMobileAccordion(mobileAccordion === menu.name ? null : menu.name)}
+                    className="flex justify-between items-center w-full text-left text-lg font-black py-2 text-slate-900"
+                  >
+                    <span>{menu.name}</span>
+                    {mobileAccordion === menu.name ? <ChevronUp className="w-5 h-5 text-slate-500" /> : <ChevronDown className="w-5 h-5 text-slate-500" />}
+                  </button>
+
+                  <AnimatePresence>
+                    {mobileAccordion === menu.name && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="overflow-hidden pl-4 mt-2 space-y-2.5 border-l-2 border-slate-100"
+                      >
+                        {menu.subItems.map((subItem) => (
+                          <button
+                            key={subItem.name}
+                            onClick={(e) => handleNavClick(e, subItem.index)}
+                            className={`block w-full text-left py-1 text-sm font-bold ${
+                              currentSection === subItem.index ? 'text-[#0072BC]' : 'text-slate-600'
+                            }`}
+                          >
+                            {subItem.name}
+                          </button>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               ))}
             </div>
           </motion.div>
@@ -349,6 +453,138 @@ const CeoIntroduction = () => {
             </motion.div>
           </div>
         </div>
+      </div>
+    </section>
+  );
+};
+
+// [NEW] 이용 안내 컴포넌트 (서비스 절차 및 장기요양 핵심 요약)
+const ServiceGuide = ({ onNavigate }: { onNavigate: (idx: number) => void }) => {
+  const steps = [
+    { 
+      number: '01', 
+      title: '1:1 안심 상담', 
+      desc: '대표 간호사와 전문 코디네이터가 어르신의 신체 및 인지 상태, 필요 서비스를 과학적으로 진단합니다.',
+      icon: <HelpCircle className="w-5 h-5 text-med-cyan" />
+    },
+    { 
+      number: '02', 
+      title: '맞춤형 AI 매칭', 
+      desc: '2만여 명의 인력 DB를 바탕으로 지역, 희망 요건, 어르신 성향에 딱 맞는 1등 케어 파트너를 지정합니다.',
+      icon: <Users className="w-5 h-5 text-med-cyan" />
+    },
+    { 
+      number: '03', 
+      title: '투명한 케어 개시', 
+      desc: '신원 검증과 신체/윤리 교육을 수료한 검증된 전문가가 정직하고 정성스러운 돌봄을 실행합니다.',
+      icon: <ClipboardCheck className="w-5 h-5 text-med-cyan" />
+    },
+    { 
+      number: '04', 
+      title: '지속적 피드백 관리', 
+      desc: '만족도 모니터링 및 실시간 알림 피드백을 통해 멀리 있는 가족도 늘 곁에 있는 듯 안심할 수 있습니다.',
+      icon: <ShieldCheck className="w-5 h-5 text-med-cyan" />
+    }
+  ];
+
+  const infoCards = [
+    {
+      title: "장기요양 등급 무료 신청",
+      desc: "공단 등급 신청부터 방문 조사 대비까지 전 과정을 무료 대행합니다.",
+      icon: <FileText className="w-7 h-7 text-[#0072BC]" />,
+      action: () => onNavigate(9) // 상담 신청 섹션으로 이동
+    },
+    {
+      title: "국가지원 보조금 안내",
+      desc: "정부 보조금을 통해 최소 85%에서 최대 100%까지 혜택받는 법을 알려드립니다.",
+      icon: <Info className="w-7 h-7 text-[#0072BC]" />,
+      action: () => onNavigate(9)
+    },
+    {
+      title: "방문요양보호사 배정",
+      desc: "가정에 정기적으로 방문하여 가사 지원과 정서 지원을 도울 요양사를 매칭합니다.",
+      icon: <UserPlus className="w-7 h-7 text-[#0072BC]" />,
+      action: () => onNavigate(9)
+    },
+    {
+      title: "정부 지원 복지용구",
+      desc: "휠체어, 전동침대 등 어르신 거동에 필수적인 보조 용품 렌탈/구매를 연계합니다.",
+      icon: <ShoppingBag className="w-7 h-7 text-[#0072BC]" />,
+      action: () => onNavigate(9)
+    }
+  ];
+
+  return (
+    <section className="min-h-full overflow-y-auto py-20 bg-slate-900 text-white">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+        
+        {/* 상단 타이틀 */}
+        <div className="text-center mb-16">
+          <span className="inline-block px-4 py-1 bg-white/10 rounded-full border border-white/20 mb-3">
+            <span className="text-med-cyan font-black text-xs tracking-widest uppercase">Service Guide</span>
+          </span>
+          <h2 className="text-2xl md:text-4xl font-bold mb-4">서비스 이용 안내</h2>
+          <p className="text-slate-400 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">
+            클라우드나인 메디케어는 체계적이고 스마트한 단계별 관리를 통해 어르신에게 가장 품격 있고 안전한 일상을 선물합니다.
+          </p>
+        </div>
+
+        {/* 4단계 타임라인 카드 */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
+          {steps.map((step, idx) => (
+            <motion.div
+              key={idx}
+              whileHover={{ y: -8, backgroundColor: 'rgba(255, 255, 255, 0.06)' }}
+              className="bg-white/5 border border-white/10 rounded-3xl p-6 relative flex flex-col justify-between transition-colors overflow-hidden group"
+            >
+              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-med-cyan/10 to-transparent rounded-bl-full pointer-events-none group-hover:scale-125 transition-transform" />
+              <div>
+                <div className="flex justify-between items-center mb-6">
+                  <span className="text-2xl font-black text-slate-500 opacity-60 tracking-wider font-mono">{step.number}</span>
+                  <div className="w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center">
+                    {step.icon}
+                  </div>
+                </div>
+                <h3 className="text-lg font-bold mb-3 text-white group-hover:text-med-cyan transition-colors">{step.title}</h3>
+                <p className="text-slate-400 text-xs md:text-sm leading-relaxed">{step.desc}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* 장기요양 혜택 정보 통합 카드 영역 (기존 LongTermCare 통합) */}
+        <div className="bg-white/5 border border-white/10 rounded-[2.5rem] p-8 lg:p-12 relative overflow-hidden">
+          <div className="absolute -top-40 -left-40 w-96 h-96 bg-[#0072BC]/20 rounded-full blur-[100px]" />
+          <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-med-cyan/10 rounded-full blur-[100px]" />
+
+          <div className="relative z-10 text-center lg:text-left mb-10">
+            <h3 className="text-xl md:text-2xl font-bold text-white mb-2">노인장기요양보험 혜택 한눈에 보기</h3>
+            <p className="text-slate-400 text-xs md:text-sm">어르신의 품격 있는 일상을 국가지원을 통해 최대 100%까지 부담 없이 받으실 수 있습니다.</p>
+          </div>
+
+          <div className="relative z-10 grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {infoCards.map((card, i) => (
+              <button
+                key={i}
+                onClick={card.action}
+                className="bg-slate-950/40 hover:bg-slate-950/70 border border-white/5 hover:border-med-cyan/30 rounded-2xl p-6 text-left transition-all hover:scale-[1.03] group flex flex-col justify-between"
+              >
+                <div>
+                  <div className="w-12 h-12 bg-white/5 group-hover:bg-[#0072BC]/10 rounded-xl flex items-center justify-center mb-5 transition-colors">
+                    {card.icon}
+                  </div>
+                  <h4 className="text-sm font-bold text-white group-hover:text-med-cyan transition-colors mb-2">{card.title}</h4>
+                  <p className="text-slate-400 text-xs leading-relaxed">{card.desc}</p>
+                </div>
+                <div className="flex items-center gap-1.5 text-med-cyan text-xs font-bold mt-6 group-hover:translate-x-1.5 transition-transform">
+                  <span>상담 신청</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
       </div>
     </section>
   );
@@ -909,72 +1145,147 @@ const FamilyCareForm = () => {
   );
 };
 
-
-
-const LongTermCare = ({ onNavigate }: { onNavigate: (idx: number) => void }) => {
-  // 각 카드 클릭 시 상담신청 섹션(index 0)으로 이동
-  const options = [
+// [NEW] 센터 창업 안내 컴포넌트
+const StartupGuide = ({ onNavigate }: { onNavigate: (idx: number) => void }) => {
+  const benefits = [
     {
-      title: "노인장기요양등급신청",
-      desc: "복잡한 등급 신청 절차를 전문가가 무료로 도와드립니다.",
-      icon: <FileText className="w-8 h-8 text-med-cyan" />,
-      action: () => onNavigate(6)
+      title: "전국 2만 명 인력 네트워크",
+      desc: "본사가 검증한 대규모 요양보호사 및 간병인 DB를 통해 개설 초기 구인난 걱정을 원천 해결합니다.",
+      icon: <Users className="w-6 h-6 text-med-cyan" />
     },
     {
-      title: "노인장기요양등급안내",
-      desc: "등급별 혜택과 판정 기준을 상세히 안내해 드립니다.",
-      icon: <Info className="w-8 h-8 text-med-cyan" />,
-      action: () => onNavigate(5)
+      title: "스마트 행정 자동화 솔루션",
+      desc: "수작업 일지 작성과 공단 청구 절차를 획기적으로 시스템화하여 1인 원장도 50인 이상 운영 가능합니다.",
+      icon: <Activity className="w-6 h-6 text-med-cyan" />
     },
     {
-      title: "요양보호사 신청",
-      desc: "어르신께 꼭 맞는 전문 요양보호사를 매칭해 드립니다.",
-      icon: <UserPlus className="w-8 h-8 text-med-cyan" />,
-      action: () => onNavigate(5)
+      title: "지정제 심사 밀착 통과제",
+      desc: "지정 심사 서류 작성부터 심사위원회 질문 시뮬레이션까지 본사 베테랑 팀이 동행하여 100% 합격을 지원합니다.",
+      icon: <ShieldCheck className="w-6 h-6 text-med-cyan" />
     },
     {
-      title: "복지용구 신청",
-      desc: "어르신의 생활 편의를 돕는 다양한 복지용구를 안내해 드립니다.",
-      icon: <ShoppingBag className="w-8 h-8 text-med-cyan" />,
-      action: () => onNavigate(5)
+      title: "고급화 브랜드 파워 & 마케팅",
+      desc: "지역 타겟 온라인 광고 및 정밀 브랜딩 솔루션을 무상 지원하여 오픈 첫 달 어르신 유치를 선점합니다.",
+      icon: <Award className="w-6 h-6 text-med-cyan" />
     }
   ];
 
   return (
-    <section id="longterm" className="h-full flex flex-col justify-center bg-slate-900 text-white px-6">
-      <div className="max-w-7xl mx-auto w-full">
-        <div className="text-center mb-12">
-          <div className="inline-block px-4 py-1 bg-white/10 rounded-full border border-white/20 mb-4">
-            <span className="text-med-cyan font-black text-xs tracking-widest uppercase">Long-term Care</span>
+    <section className="min-h-full overflow-y-auto py-20 bg-slate-900 text-white flex flex-col justify-center">
+      <div className="max-w-7xl mx-auto w-full px-6">
+        
+        {/* 상단 헤더 */}
+        <div className="text-center mb-14">
+          <div className="inline-block px-4 py-1 bg-white/10 rounded-full border border-white/20 mb-3">
+            <span className="text-med-cyan font-black text-xs tracking-widest uppercase">Franchise Startup</span>
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">노인장기요양 서비스</h2>
-          <p className="text-slate-400 max-w-2xl mx-auto text-base">
-            어르신의 건강한 노후를 위해 국가에서 지원하는 장기요양보험 제도를 쉽고 편리하게 이용하세요.
+          <h2 className="text-2xl md:text-4xl font-bold mb-4">센터 창업 안내</h2>
+          <p className="text-slate-400 max-w-2xl mx-auto text-sm md:text-base">
+            클라우드나인 메디케어와 함께 실버 산업의 성공을 선점하세요. 본사의 강력한 플랫폼 기술과 노하우를 그대로 전수합니다.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {options.map((option, i) => (
-            <motion.button
-              key={i}
-              whileHover={{ y: -10, backgroundColor: 'rgba(255,255,255,0.08)' }}
-              onClick={option.action}
-              className="text-left p-8 rounded-[2rem] bg-white/5 border border-white/10 transition-all group"
+        {/* 4대 혜택 카드 그리드 */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          {benefits.map((benefit, i) => (
+            <div 
+              key={i} 
+              className="bg-white/5 border border-white/10 rounded-3xl p-8 flex flex-col justify-between group hover:bg-white/10 transition-colors"
             >
-              <div className="w-14 h-14 bg-white/5 rounded-xl flex items-center justify-center mb-6 group-hover:bg-med-cyan/20 transition-colors">
-                {option.icon}
+              <div>
+                <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-med-cyan/20 transition-colors">
+                  {benefit.icon}
+                </div>
+                <h3 className="text-lg font-bold mb-3 group-hover:text-med-cyan transition-colors">{benefit.title}</h3>
+                <p className="text-slate-400 text-xs md:text-sm leading-relaxed">{benefit.desc}</p>
               </div>
-              <h3 className="text-xl font-bold mb-3 group-hover:text-med-cyan transition-colors">{option.title}</h3>
-              <p className="text-slate-400 text-sm leading-relaxed mb-6">
-                {option.desc}
-              </p>
-              <div className="flex items-center gap-2 text-med-cyan font-bold text-sm">
-                <span>자세히 보기</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
-              </div>
-            </motion.button>
+            </div>
           ))}
         </div>
+
+        {/* 행동 유도 CTA 영역 */}
+        <div className="text-center">
+          <button
+            onClick={() => onNavigate(9)} // 상담 신청 인덱스
+            className="inline-flex items-center gap-2 bg-med-cyan text-slate-900 px-8 py-4 rounded-2xl font-black text-base md:text-lg hover:scale-105 transition-transform shadow-lg shadow-med-cyan/15 cursor-pointer"
+          >
+            <span>센터 창업 컨설팅 무료 신청</span>
+            <ArrowRight className="w-5 h-5" />
+          </button>
+        </div>
+
+      </div>
+    </section>
+  );
+};
+
+// [NEW] 지정제 심사 가이드 컴포넌트
+const EvaluationGuide = ({ onNavigate }: { onNavigate: (idx: number) => void }) => {
+  const requirements = [
+    {
+      title: "1. 인력 확보 요건",
+      desc: "시설장 자격(사회복지사 1·2급, 의료인 자격 또는 요양보호사 5년 이상 근무 경력자) 충족 및 1명 이상의 상근 근로계약 확보가 필수 요건입니다."
+    },
+    {
+      title: "2. 전용 사무실 구비",
+      desc: "독립된 공간으로 상시 근무 및 상담이 가능한 사무실(면적 제한 없음, 단 독립성 입증 필요)을 확보해야 하며 통신, 소방, 잠금장치가 완비되어야 합니다."
+    },
+    {
+      title: "3. 운영 규정 & 사업계획서",
+      desc: "급여제공지침 10종 서류와 세입세출예산서, 개인정보처리방침을 포함한 지자체 심사기준 맞춤형 전용 서류 꾸러미가 빈틈없이 준비되어야 합니다."
+    },
+    {
+      title: "4. 대면 평가 통과",
+      desc: "지자체 심의위원회가 실시하는 구술 평가에서 장기요양제도에 대한 정합성과 센터 운영 의지에 대해 신뢰를 주는 명확한 답변 대응 시뮬레이션이 수반되어야 합니다."
+    }
+  ];
+
+  return (
+    <section className="min-h-full overflow-y-auto py-20 bg-slate-900 text-white flex flex-col justify-center">
+      <div className="max-w-7xl mx-auto w-full px-6">
+        
+        {/* 상단 헤더 */}
+        <div className="text-center mb-14">
+          <div className="inline-block px-4 py-1 bg-white/10 rounded-full border border-white/20 mb-3">
+            <span className="text-med-cyan font-black text-xs tracking-widest uppercase">Evaluation Guide</span>
+          </div>
+          <h2 className="text-2xl md:text-4xl font-bold mb-4">지정제 심사 가이드</h2>
+          <p className="text-slate-400 max-w-2xl mx-auto text-sm md:text-base">
+            더욱 까다로워진 장기요양기관 신규 지정제 심사, 클라우드나인 메디케어의 맞춤 서류 검수 솔루션으로 반려 없는 완벽한 개설을 도와드립니다.
+          </p>
+        </div>
+
+        {/* 요건 정보 보드 */}
+        <div className="grid md:grid-cols-2 gap-8 mb-12">
+          {requirements.map((req, i) => (
+            <div 
+              key={i} 
+              className="bg-white/5 border border-white/10 rounded-[2rem] p-6 md:p-8 flex gap-4 items-start"
+            >
+              <div className="w-8 h-8 rounded-full bg-med-cyan/15 flex items-center justify-center flex-shrink-0 text-med-cyan">
+                <CheckCircle2 className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-white mb-2">{req.title}</h3>
+                <p className="text-slate-400 text-xs md:text-sm leading-relaxed">{req.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* 팁 카드 */}
+        <div className="bg-amber-500/10 border border-amber-500/20 rounded-[2rem] p-6 md:p-8 max-w-4xl mx-auto">
+          <div className="flex gap-4 items-start">
+            <Info className="w-6 h-6 text-amber-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <h4 className="text-amber-400 font-bold text-base mb-2">클라우드나인메디케어 심사 지원 패키지</h4>
+              <p className="text-slate-300 text-xs md:text-sm leading-relaxed">
+                창업 컨설팅을 진행하시는 예비 원장님들에게는 공단 지정 심사 서류 자동 검수 및 수정 조율 피드백을 실시간으로 무상 제공합니다. 지자체별로 다른 세부 심의 기준을 정확하게 분석하여 완벽하게 지정 승인을 받아내도록 돕습니다.
+              </p>
+            </div>
+          </div>
+        </div>
+
       </div>
     </section>
   );
@@ -1154,7 +1465,98 @@ const Testimonials = () => {
   );
 };
 
+// [NEW] 자주 묻는 질문 (FAQ) 컴포넌트
+const FaqSection = () => {
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
+  const faqs = [
+    {
+      q: "노인장기요양등급 신청 절차가 궁금해요.",
+      a: "장기요양등급 신청은 국민건강보험공단 지사에 신청서와 함께 의사소견서 등을 제출하고, 이후 공단 직원의 방문 조사를 거쳐 등급 판정 위원회에서 최종 결정됩니다. 절차가 낯설고 번거로우실 수 있어, 클라우드나인 메디케어는 대표 간호사와 행정 전담팀이 모든 신청 과정을 무상으로 밀착 대행해 드립니다."
+    },
+    {
+      q: "간병인이나 요양보호사 배정은 얼마나 걸리나요?",
+      a: "클라우드나인은 까다로운 면접과 전문성 평가를 통과한 2만 명 이상의 우수 인력 DB를 실시간 보유하고 있습니다. 덕분에 매칭 신청 접수 후 일반적인 경우 당일 또는 최대 24시간 이내에 어르신의 상태와 완벽히 매치되는 전문가를 선별하여 배정 완료해 드립니다."
+    },
+    {
+      q: "가족간병 신청 시 어떤 지원을 받나요?",
+      a: "가족이 요양보호사 자격증을 소지하고 직접 부모님이나 배우자를 돌보시는 경우, 법정 요건에 따라 국가 장기요양보험 재원에서 '가족요양비(가족인력 급여)'를 현금성 급여로 지원받을 수 있습니다. 이에 필요한 자격증 취득 안내, 행정 계약 등록 및 행정 사후 관리를 클라우드나인에서 전부 케어해 드립니다."
+    },
+    {
+      q: "센터 창업 및 지정제 심사 지원은 무엇인가요?",
+      a: "최근 노인장기요양기관 개설은 '지정제 심사' 도입으로 지자체 서류 반려율이 70%에 달할 정도로 까다롭습니다. 클라우드나인 메디케어는 본사가 직접 사업계획서, 운영규정, 세입세출예산서 등 심사 통과 서류 일체를 1:1로 밀착 튜터링 및 수정 지원하여 반려 없이 단번에 허가를 획득하도록 동행합니다."
+    },
+    {
+      q: "서비스 비용 중 본인 부담 비율은 어떻게 되나요?",
+      a: "장기요양보험 혜택 적용 시 일반 대상자는 전체 비용의 15%만 본인이 부담하고 나머지 85%는 국가에서 지원합니다. 대상자의 소득 수준에 따라 경감 대상자는 6% 또는 9%만 부담하며, 의료급여 수급권자 및 기초생활수급자는 본인 부담금이 100% 면제(0원)됩니다."
+    }
+  ];
+
+  const toggleFaq = (idx: number) => {
+    setActiveIndex(activeIndex === idx ? null : idx);
+  };
+
+  return (
+    <section className="min-h-full overflow-y-auto py-20 bg-slate-900 text-white flex flex-col justify-center">
+      <div className="max-w-4xl mx-auto w-full px-6">
+        
+        {/* 상단 타이틀 */}
+        <div className="text-center mb-16">
+          <div className="inline-block px-4 py-1 bg-white/10 rounded-full border border-white/20 mb-3">
+            <span className="text-med-cyan font-black text-xs tracking-widest uppercase">FAQ Center</span>
+          </div>
+          <h2 className="text-2xl md:text-4xl font-bold mb-4">자주 묻는 질문</h2>
+          <p className="text-slate-400 text-xs md:text-sm max-w-xl mx-auto">
+            클라우드나인 서비스를 이용하시는 보호자님과 예비 원장님들께서 가장 많이 문의하시는 질문들에 대해 투명하게 알려드립니다.
+          </p>
+        </div>
+
+        {/* 아코디언 목록 */}
+        <div className="space-y-4">
+          {faqs.map((faq, idx) => {
+            const isOpen = activeIndex === idx;
+            return (
+              <div 
+                key={idx}
+                className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden transition-all duration-300"
+                style={{
+                  boxShadow: isOpen ? '0 10px 30px -10px rgba(0,210,255,0.1)' : 'none',
+                  borderColor: isOpen ? 'rgba(0,210,255,0.3)' : 'rgba(255,255,255,0.1)'
+                }}
+              >
+                <button
+                  onClick={() => toggleFaq(idx)}
+                  className="w-full text-left px-6 py-5 md:py-6 flex justify-between items-center gap-4 transition-colors hover:bg-white/10"
+                >
+                  <span className="text-sm md:text-base font-bold text-white pr-4">{faq.q}</span>
+                  <div className={`w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-slate-400 shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180 text-med-cyan bg-med-cyan/10' : ''}`}>
+                    <ChevronDown className="w-4 h-4" />
+                  </div>
+                </button>
+
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25, ease: 'easeInOut' }}
+                    >
+                      <div className="px-6 pb-6 pt-2 text-xs md:text-sm text-slate-300 leading-relaxed border-t border-white/5 bg-slate-950/20">
+                        {faq.a}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
+        </div>
+
+      </div>
+    </section>
+  );
+};
 
 const Footer = ({ onNavigate }: { onNavigate?: (idx: number) => void }) => {
   return (
@@ -1528,7 +1930,19 @@ const PrivacyPolicy = () => {
 
 export default function App() {
   // 섹션별 고유 해시 — URL로 직접 접근 가능
-  const sectionHashes = ['home', 'ceo', 'registration', 'family', 'longterm', 'reviews', 'consultation', 'privacy'];
+  const sectionHashes = [
+    'home', 
+    'ceo', 
+    'guide', 
+    'registration', 
+    'family', 
+    'startup', 
+    'evaluation', 
+    'reviews', 
+    'faq', 
+    'consultation', 
+    'privacy'
+  ];
 
   // URL 해시에서 초기 섹션 결정
   const getInitialSection = () => {
@@ -1565,10 +1979,13 @@ export default function App() {
   const sections = [
     <Hero />,
     <CeoIntroduction />,
+    <ServiceGuide onNavigate={handleSetSection} />,
     <RegistrationForm />,
     <FamilyCareForm />,
-    <LongTermCare onNavigate={handleSetSection} />,
+    <StartupGuide onNavigate={handleSetSection} />,
+    <EvaluationGuide onNavigate={handleSetSection} />,
     <Testimonials />,
+    <FaqSection />,
     <ConsultationSection onNavigate={handleSetSection} />,
     <PrivacyPolicy />
   ];
