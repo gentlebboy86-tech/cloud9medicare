@@ -37,6 +37,8 @@ const formatPhoneNumber = (value: string) => {
   return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7, 11)}`;
 };
 
+const HOSPITAL_COMPANION_APPLICATION_URL = 'https://cloud9-medicare.vercel.app/?utm_source=homepage&utm_campaign=main_nav';
+
 // 대표님의 4대 대메뉴 구성안 데이터
 const menuConfig = [
   {
@@ -107,7 +109,14 @@ const Navbar = ({ currentSection, setCurrentSection }: { currentSection: number,
           </div>
 
           {/* 데스크톱 대메뉴 네비게이션 */}
-          <div className="hidden lg:flex items-center gap-10">
+          <div className="hidden lg:flex items-center gap-6">
+            <a
+              href={HOSPITAL_COMPANION_APPLICATION_URL}
+              className="inline-flex items-center gap-2 rounded-full bg-[#0072BC] px-5 py-3 text-[15px] font-black text-white shadow-lg shadow-[#0072BC]/20 transition-all hover:-translate-y-0.5 hover:bg-[#005f9d]"
+            >
+              <ClipboardCheck className="h-4 w-4" />
+              병원동행 서비스 신청
+            </a>
             {menuConfig.map((menu) => (
               <div 
                 key={menu.name}
@@ -179,6 +188,14 @@ const Navbar = ({ currentSection, setCurrentSection }: { currentSection: number,
             className="lg:hidden bg-white border-t border-slate-100 overflow-hidden"
           >
             <div className="px-6 py-6 space-y-4">
+              <a
+                href={HOSPITAL_COMPANION_APPLICATION_URL}
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#0072BC] px-5 py-4 text-base font-black text-white shadow-lg shadow-[#0072BC]/20"
+              >
+                <ClipboardCheck className="h-5 w-5" />
+                병원동행 서비스 신청
+              </a>
               {menuConfig.map((menu) => (
                 <div key={menu.name} className="border-b border-slate-50 pb-3">
                   <button
