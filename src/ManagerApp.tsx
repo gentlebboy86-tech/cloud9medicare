@@ -113,7 +113,7 @@ export default function ManagerApp() {
 
     setStatus('submitting');
     try {
-      const response = await fetch('https://formsubmit.co/ajax/steave5873@naver.com', {
+      const response = await fetch('https://formsubmit.co/ajax/medicare@cloud9sol.co.kr', {
         method: 'POST',
         headers: {'Content-Type': 'application/json', Accept: 'application/json'},
         body: JSON.stringify({

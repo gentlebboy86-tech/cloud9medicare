@@ -691,7 +691,7 @@ const RegistrationForm = () => {
     setRegError('');
     setIsRegSubmitting(true);
 
-    fetch("https://formsubmit.co/ajax/steave5873@naver.com", {
+    fetch("https://formsubmit.co/ajax/medicare@cloud9sol.co.kr", {
       method: "POST",
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({
@@ -723,7 +723,7 @@ const RegistrationForm = () => {
     setFindError('');
     setIsFindSubmitting(true);
 
-    fetch("https://formsubmit.co/ajax/steave5873@naver.com", {
+    fetch("https://formsubmit.co/ajax/medicare@cloud9sol.co.kr", {
       method: "POST",
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({
@@ -1011,7 +1011,7 @@ const FamilyCareForm = () => {
     setErrorMsg('');
     setIsSubmitting(true);
 
-    fetch("https://formsubmit.co/ajax/steave5873@naver.com", {
+    fetch("https://formsubmit.co/ajax/medicare@cloud9sol.co.kr", {
       method: "POST",
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({
@@ -1664,17 +1664,27 @@ const ConsultationForm = () => {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
-    message: ''
+    service: '',
+    region: '',
+    preferredTime: '',
+    message: '',
+    privacyConsent: false
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const services = ['가족간병', '간병인 매칭', '병원동행', '치매·요양 상담', '장기요양등급', '기타 상담'];
 
   const handleButtonClick = () => {
     setErrorMsg('');
+    const phoneDigits = formData.phone.replace(/\D/g, '');
 
-    if (!formData.name.trim() || !formData.phone.trim()) {
-      setErrorMsg('이름과 전화번호를 정확히 입력해 주세요.');
+    if (!formData.name.trim() || phoneDigits.length < 10 || !formData.service) {
+      setErrorMsg('이름, 연락처, 상담 분야를 정확히 입력해 주세요.');
+      return;
+    }
+    if (!formData.privacyConsent) {
+      setErrorMsg('개인정보 수집·이용 동의가 필요합니다.');
       return;
     }
 
@@ -1682,16 +1692,20 @@ const ConsultationForm = () => {
 
     // requestAnimationFrame으로 브라우저가 로딩 UI를 먼저 그리도록 보장 (INP 해결)
     requestAnimationFrame(() => {
-      fetch("https://formsubmit.co/ajax/steave5873@naver.com", {
+      fetch("https://formsubmit.co/ajax/medicare@cloud9sol.co.kr", {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          name: formData.name,
-          phone: formData.phone,
-          message: formData.message || "기재하지 않음",
+          '신청자명': formData.name,
+          '연락처': formData.phone,
+          '상담 분야': formData.service,
+          '거주 지역': formData.region || '기재하지 않음',
+          '상담 가능 시간': formData.preferredTime || '시간 협의',
+          '문의사항': formData.message || '기재하지 않음',
+          '개인정보 수집 동의': '동의',
           _subject: "클라우드나인 메디케어: 새로운 상담 신청",
           _template: "table",
           _captcha: "false"
@@ -1702,8 +1716,7 @@ const ConsultationForm = () => {
         const data = await response.json();
         if (response.ok && data.success) {
           setSubmitSuccess(true);
-          setFormData({ name: '', phone: '', message: '' });
-          setTimeout(() => setSubmitSuccess(false), 5000);
+          setFormData({ name: '', phone: '', service: '', region: '', preferredTime: '', message: '', privacyConsent: false });
         } else {
           // FormSubmit이 반환하는 실제 에러 메시지를 표시
           setErrorMsg(data.message || '전송에 실패했습니다. 잠시 후 다시 시도해 주세요.');
@@ -1719,113 +1732,123 @@ const ConsultationForm = () => {
   };
 
   return (
-    <div className="relative rounded-[2rem] p-8 md:p-10 w-full max-w-md lg:ml-auto overflow-hidden"
-         style={{
-           background: 'rgba(255, 255, 255, 0.12)',
-           backdropFilter: 'blur(24px) saturate(180%)',
-           WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-           border: '1px solid rgba(255, 255, 255, 0.25)',
-           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
-         }}
-    >
-      {/* 상단 빛 반사 효과 */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
-      
-      <div className="relative z-10 mb-8 text-left">
-        <h3 className="text-2xl font-black text-white mb-2" style={{ textShadow: '0 1px 8px rgba(0,0,0,0.2)' }}>전문 간호사 1:1 안심 상담 신청</h3>
-        <p className="text-white/70 text-sm">연락처를 남겨주시면 대표 간호사가 직접 부모님의 상태에 맞는 최적의 케어 플랜을 제안해 드립니다.</p>
+    <div className="bg-white rounded-3xl p-6 md:p-9 w-full max-w-lg lg:ml-auto shadow-2xl shadow-black/30 border border-white/70">
+      {submitSuccess ? (
+        <div className="py-10 text-center" role="status" aria-live="polite">
+          <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-5">
+            <CheckCircle2 className="w-8 h-8 text-emerald-600" />
+          </div>
+          <h3 className="text-2xl font-black text-slate-900 mb-3">상담 신청이 완료되었습니다</h3>
+          <p className="text-slate-500 text-sm leading-relaxed mb-7">신청 내용을 확인한 뒤 영업일 기준 24시간 이내에<br />전문 상담 담당자가 연락드리겠습니다.</p>
+          <button type="button" onClick={() => setSubmitSuccess(false)} className="text-[#0072BC] text-sm font-black hover:underline">신청서 다시 작성</button>
+        </div>
+      ) : (
+      <>
+      <div className="mb-7 text-left">
+        <div className="inline-flex items-center gap-1.5 text-[#0072BC] font-black text-xs mb-2">
+          <ShieldCheck className="w-4 h-4" /> PRIVATE CONSULTATION
+        </div>
+        <h3 className="text-2xl md:text-3xl font-black text-slate-900 mb-2">1:1 안심 상담 신청</h3>
+        <p className="text-slate-500 text-sm leading-relaxed">필요한 돌봄을 정확히 파악할 수 있도록 전문 상담 담당자가 직접 안내합니다.</p>
       </div>
 
-      <div className="relative z-10 space-y-4">
+      <div className="space-y-4">
         <div className="space-y-1.5">
-          <label className="text-xs font-bold text-white/80 uppercase">이름 <span className="text-sky-300">*</span></label>
+          <label className="text-sm font-bold text-slate-700">신청자명 <span className="text-[#0072BC]">*</span></label>
           <input
             type="text"
-            placeholder="보호자 성함"
+            autoComplete="name"
+            placeholder="성함을 입력해 주세요"
             value={formData.name}
             onChange={(e) => setFormData({...formData, name: e.target.value})}
             onKeyDown={(e) => { if (e.key === 'Enter') handleButtonClick(); }}
-            className="w-full px-4 py-3.5 rounded-xl text-white text-sm placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all"
-            style={{
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              backdropFilter: 'blur(8px)',
-            }}
+            className="w-full h-12 px-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-[#0072BC] focus:ring-4 focus:ring-[#0072BC]/10 transition-all"
           />
         </div>
         <div className="space-y-1.5">
-          <label className="text-xs font-bold text-white/80 uppercase">전화번호 <span className="text-sky-300">*</span></label>
+          <label className="text-sm font-bold text-slate-700">연락처 <span className="text-[#0072BC]">*</span></label>
           <input
             type="tel"
+            inputMode="tel"
+            autoComplete="tel"
             placeholder="010-0000-0000"
             value={formData.phone}
-            onChange={(e) => setFormData({...formData, phone: e.target.value})}
+            onChange={(e) => setFormData({...formData, phone: formatPhoneNumber(e.target.value)})}
             onKeyDown={(e) => { if (e.key === 'Enter') handleButtonClick(); }}
-            className="w-full px-4 py-3.5 rounded-xl text-white text-sm placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all"
-            style={{
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              backdropFilter: 'blur(8px)',
-            }}
+            maxLength={13}
+            className="w-full h-12 px-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-[#0072BC] focus:ring-4 focus:ring-[#0072BC]/10 transition-all"
           />
         </div>
+        <div className="space-y-2">
+          <label className="text-sm font-bold text-slate-700">상담 분야 <span className="text-[#0072BC]">*</span></label>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {services.map((service) => (
+              <button key={service} type="button" onClick={() => setFormData({...formData, service})} className={`min-h-10 px-2 rounded-xl border text-xs font-bold transition-all ${formData.service === service ? 'bg-[#0072BC] text-white border-[#0072BC] shadow-md shadow-blue-500/20' : 'bg-slate-50 text-slate-600 border-slate-200 hover:border-[#0072BC]/50'}`}>{service}</button>
+            ))}
+          </div>
+        </div>
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <label className="text-sm font-bold text-slate-700">거주 지역 <span className="text-slate-400 font-medium">(선택)</span></label>
+            <input type="text" placeholder="예: 부산 수영구" value={formData.region} onChange={(e) => setFormData({...formData, region: e.target.value})} className="w-full h-12 px-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-[#0072BC] focus:ring-4 focus:ring-[#0072BC]/10" />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-sm font-bold text-slate-700">상담 가능 시간</label>
+            <select value={formData.preferredTime} onChange={(e) => setFormData({...formData, preferredTime: e.target.value})} className="w-full h-12 px-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 text-sm focus:outline-none focus:border-[#0072BC] focus:ring-4 focus:ring-[#0072BC]/10">
+              <option value="">시간 협의</option><option>오전 9시~12시</option><option>오후 1시~6시</option><option>저녁 6시 이후</option>
+            </select>
+          </div>
+        </div>
         <div className="space-y-1.5">
-          <label className="text-xs font-bold text-white/80 uppercase">추가 문의 사항 (선택)</label>
+          <label className="text-sm font-bold text-slate-700">문의사항 <span className="text-slate-400 font-medium">(선택)</span></label>
           <textarea
             rows={2}
-            placeholder="간략한 문의사항을 적어주세요."
+            placeholder="현재 상황과 궁금한 점을 간단히 남겨 주세요."
             value={formData.message}
             onChange={(e) => setFormData({...formData, message: e.target.value})}
-            className="w-full px-4 py-3.5 rounded-xl text-white text-sm placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-white/30 resize-none transition-all"
-            style={{
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              backdropFilter: 'blur(8px)',
-            }}
+            className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-[#0072BC] focus:ring-4 focus:ring-[#0072BC]/10 resize-none transition-all"
           />
         </div>
 
+        <label className="flex items-start gap-3 p-3.5 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer">
+          <input type="checkbox" checked={formData.privacyConsent} onChange={(e) => setFormData({...formData, privacyConsent: e.target.checked})} className="mt-0.5 w-4 h-4 accent-[#0072BC]" />
+          <span className="text-[11px] text-slate-500 leading-relaxed"><strong className="text-slate-700">개인정보 수집·이용 동의 (필수)</strong><br />수집항목: 이름, 연락처, 상담 정보 · 이용목적: 상담 연락 · 보유기간: 상담 종료 후 3개월</span>
+        </label>
+
         <div className="pt-2">
           {errorMsg && (
-            <div className="mb-3 text-red-200 text-sm font-bold p-3 rounded-lg flex items-center justify-center gap-2"
-                 style={{ background: 'rgba(239, 68, 68, 0.2)', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
-              <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse"></span>
+            <div className="mb-3 text-red-600 text-sm font-bold p-3 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center gap-2" role="alert">
               {errorMsg}
             </div>
           )}
           <button
             type="button"
             onClick={handleButtonClick}
-            disabled={isSubmitting || submitSuccess}
+            disabled={isSubmitting}
             className={`w-full py-4 rounded-xl font-black text-xl flex items-center justify-center gap-2 transition-all ${
-              submitSuccess
-                ? 'bg-emerald-500/80 text-white shadow-lg shadow-emerald-500/20'
-                : isSubmitting
-                  ? 'bg-white/20 text-white/70 cursor-not-allowed'
-                  : 'bg-white text-[#0072BC] hover:bg-white/90 hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-white/20'
+              isSubmitting
+                ? 'bg-slate-300 text-white cursor-not-allowed'
+                : 'bg-[#0072BC] text-white hover:bg-[#005f9d] hover:-translate-y-0.5 shadow-lg shadow-blue-600/20'
             }`}
           >
-            {submitSuccess ? (
-              <>
-                <CheckCircle2 className="w-5 h-5" />
-                상담 신청이 완료되었습니다
-              </>
-            ) : isSubmitting ? (
+            {isSubmitting ? (
               <>
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 안전하게 접수 중...
               </>
             ) : (
               <>
-                무료 맞춤 케어 상담받기 <ArrowRight className="w-5 h-5 stroke-[2.5]" />
+                무료 안심 상담 신청하기 <ArrowRight className="w-5 h-5 stroke-[2.5]" />
               </>
             )}
           </button>
-          <p className="text-center text-white/40 text-[10px] mt-3">
-            입력 정보는 상담 목적으로만 사용되며 안전하게 보호됩니다.
+          <p className="text-center text-slate-400 text-[10px] mt-3">
+            상담 신청만으로 별도의 비용이나 계약 의무가 발생하지 않습니다.
           </p>
         </div>
       </div>
+      </>
+      )}
     </div>
   );
 };
@@ -1834,15 +1857,15 @@ const ConsultationSection = ({ onNavigate }: { onNavigate: (idx: number) => void
   return (
     <section className="h-full overflow-y-auto bg-slate-50 text-slate-800 scroll-smooth">
       {/* Hero Section with Form (Lead Generation Layout) */}
-      <div className="relative min-h-[90vh] lg:h-[85vh] flex items-center justify-center overflow-hidden pt-20 pb-10">
+      <div className="relative min-h-screen flex items-center justify-center overflow-hidden pt-24 pb-14 bg-slate-950">
         <div className="absolute inset-0 z-0">
           <img
             src="/hero-consultation.png"
             alt="따뜻한 로컬 간호사와 어르신의 모습"
             className="w-full h-full object-cover object-center"
           />
-          <div className="absolute inset-0 bg-[#0072BC]/80 mix-blend-multiply" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0072BC] to-[#0072BC]/20" />
+          <div className="absolute inset-0 bg-slate-950/80 mix-blend-multiply" />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/95 to-[#0072BC]/50" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 w-full">
@@ -1853,17 +1876,27 @@ const ConsultationSection = ({ onNavigate }: { onNavigate: (idx: number) => void
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="space-y-6 text-left"
+              className="space-y-7 text-left"
             >
-              <span className="inline-block px-4 py-1.5 bg-white/20 text-white rounded-full font-bold text-xs tracking-widest backdrop-blur-sm border border-white/30 uppercase">
-                Premium Care Service
+              <span className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-400/10 text-med-cyan rounded-full font-bold text-xs border border-cyan-300/20">
+                <ShieldCheck className="w-4 h-4" /> 전문 상담 담당자 1:1 배정
               </span>
-              <h2 className="text-3xl md:text-5xl lg:text-5xl font-black text-white tracking-tight leading-tight">
-                가족의 마음으로 모십니다
+              <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight">
+                가족을 위한 돌봄 상담,<br /><span className="text-med-cyan">처음부터 정확하게.</span>
               </h2>
-              <p className="text-base md:text-lg text-blue-50 font-medium max-w-lg">
-                치매검사부터 전문적인 병원 동행까지, 우리 가족을 위한 믿을 수 있는 선택. 지금 바로 전문가와 상담하세요.
+              <p className="text-base md:text-lg text-slate-300 font-medium max-w-xl leading-relaxed">
+                부모님의 건강 상태와 가족의 돌봄 여건을 함께 살펴보고, 필요한 서비스와 이용 절차를 알기 쉽게 안내해 드립니다.
               </p>
+              <div className="space-y-3 text-sm text-slate-200">
+                {['상담 내용을 외부에 공개하지 않는 1:1 비공개 상담', '상황에 맞는 서비스와 예상 절차 안내', '영업일 기준 24시간 이내 담당자 연락'].map((item) => (
+                  <div key={item} className="flex items-center gap-3"><CheckCircle2 className="w-5 h-5 text-med-cyan shrink-0" /><span>{item}</span></div>
+                ))}
+              </div>
+              <div className="grid grid-cols-3 max-w-lg border-y border-white/10 py-5 text-center">
+                <div><strong className="block text-sm text-white">신청 접수</strong><span className="text-[10px] text-slate-500">STEP 1</span></div>
+                <div className="border-x border-white/10"><strong className="block text-sm text-white">상황 확인</strong><span className="text-[10px] text-slate-500">STEP 2</span></div>
+                <div><strong className="block text-sm text-white">맞춤 안내</strong><span className="text-[10px] text-slate-500">STEP 3</span></div>
+              </div>
             </motion.div>
 
             {/* Lead Capture Form — 별도 컴포넌트로 분리하여 INP 최적화 */}

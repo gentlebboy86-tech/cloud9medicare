@@ -91,7 +91,7 @@ const StartupForm = () => {
     setIsSubmitting(true);
 
     requestAnimationFrame(() => {
-      fetch('https://formsubmit.co/ajax/steave5873@naver.com', {
+      fetch('https://formsubmit.co/ajax/medicare@cloud9sol.co.kr', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
