@@ -37,7 +37,7 @@ const formatPhoneNumber = (value: string) => {
   return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7, 11)}`;
 };
 
-const HOSPITAL_COMPANION_APPLICATION_URL = 'https://cloud9-medicare-8u1yuakoy-16889739.vercel.app/?utm_source=cloud9_medicare&utm_medium=referral&utm_campaign=company_homepage';
+const HOSPITAL_COMPANION_APPLICATION_URL = '/hospital-companion?utm_source=cloud9_medicare&utm_medium=referral&utm_campaign=company_homepage';
 
 // 대표님의 4대 대메뉴 구성안 데이터
 const menuConfig = [
@@ -52,13 +52,14 @@ const menuConfig = [
     name: '간병·요양 서비스',
     subItems: [
       { name: '간병인 등록', index: 3, desc: '구직 요양보호사 및 간병인 등록' },
-      { name: '가족간병 신청', index: 4, desc: '가족 직접 간병 행정 및 급여 신청' }
+      { name: '가족간병 신청', index: 4, desc: '가족 직접 간병 행정 및 급여 신청' },
+      { name: '장기요양등급 모의판정', href: '/ltc.html', desc: '52개 인정조사 항목 기반 예상 등급 확인' }
     ]
   },
   {
     name: '창업 컨설팅',
     subItems: [
-      { name: '센터 창업 안내', index: 5, desc: '가맹 창업 절차 및 혜택 안내' },
+      { name: '방문요양·주간보호 창업', index: 5, desc: '입지 분석부터 지정심사·개원까지 맞춤 컨설팅' },
       { name: '지정제 심사 가이드', index: 6, desc: '신규 지정제 심사 통과 솔루션' }
     ]
   },
@@ -92,7 +93,7 @@ const Navbar = ({ currentSection, setCurrentSection }: { currentSection: number,
     setMobileAccordion(null);
   };
 
-  const isSubItemActive = (subItems: { index: number }[]) => {
+  const isSubItemActive = (subItems: { index?: number }[]) => {
     return subItems.some(item => item.index === currentSection);
   };
 
@@ -148,20 +149,33 @@ const Navbar = ({ currentSection, setCurrentSection }: { currentSection: number,
                       style={{ boxShadow: '0 20px 40px -15px rgba(0,0,0,0.12)' }}
                     >
                       <div className="space-y-1">
-                        {menu.subItems.map((subItem) => (
-                          <button
-                            key={subItem.name}
-                            onClick={(e) => handleNavClick(e, subItem.index)}
-                            className={`w-full text-left px-4 py-3 rounded-xl transition-all flex flex-col ${
-                              currentSection === subItem.index
-                                ? 'bg-[#0072BC]/5 text-[#0072BC]'
-                                : 'hover:bg-slate-50 text-slate-700 hover:text-[#0072BC]'
-                            }`}
-                          >
-                            <span className="text-sm font-bold">{subItem.name}</span>
-                            <span className="text-[11px] text-slate-400 font-medium mt-0.5">{subItem.desc}</span>
-                          </button>
-                        ))}
+                        {menu.subItems.map((subItem) => {
+                          const itemClassName = `w-full text-left px-4 py-3 rounded-xl transition-all flex flex-col ${
+                            currentSection === subItem.index
+                              ? 'bg-[#0072BC]/5 text-[#0072BC]'
+                              : 'hover:bg-slate-50 text-slate-700 hover:text-[#0072BC]'
+                          }`;
+
+                          return subItem.href ? (
+                            <a
+                              key={subItem.name}
+                              href={subItem.href}
+                              className={itemClassName}
+                            >
+                              <span className="text-sm font-bold">{subItem.name}</span>
+                              <span className="text-[11px] text-slate-400 font-medium mt-0.5">{subItem.desc}</span>
+                            </a>
+                          ) : (
+                            <button
+                              key={subItem.name}
+                              onClick={(e) => handleNavClick(e, subItem.index!)}
+                              className={itemClassName}
+                            >
+                              <span className="text-sm font-bold">{subItem.name}</span>
+                              <span className="text-[11px] text-slate-400 font-medium mt-0.5">{subItem.desc}</span>
+                            </button>
+                          );
+                        })}
                       </div>
                     </motion.div>
                   )}
@@ -216,17 +230,30 @@ const Navbar = ({ currentSection, setCurrentSection }: { currentSection: number,
                         exit={{ opacity: 0, height: 0 }}
                         className="overflow-hidden pl-4 mt-2 space-y-2.5 border-l-2 border-slate-100"
                       >
-                        {menu.subItems.map((subItem) => (
-                          <button
-                            key={subItem.name}
-                            onClick={(e) => handleNavClick(e, subItem.index)}
-                            className={`block w-full text-left py-1 text-sm font-bold ${
-                              currentSection === subItem.index ? 'text-[#0072BC]' : 'text-slate-600'
-                            }`}
-                          >
-                            {subItem.name}
-                          </button>
-                        ))}
+                        {menu.subItems.map((subItem) => {
+                          const itemClassName = `block w-full text-left py-1 text-sm font-bold ${
+                            currentSection === subItem.index ? 'text-[#0072BC]' : 'text-slate-600'
+                          }`;
+
+                          return subItem.href ? (
+                            <a
+                              key={subItem.name}
+                              href={subItem.href}
+                              onClick={() => setMobileMenuOpen(false)}
+                              className={itemClassName}
+                            >
+                              {subItem.name}
+                            </a>
+                          ) : (
+                            <button
+                              key={subItem.name}
+                              onClick={(e) => handleNavClick(e, subItem.index!)}
+                              className={itemClassName}
+                            >
+                              {subItem.name}
+                            </button>
+                          );
+                        })}
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -240,7 +267,7 @@ const Navbar = ({ currentSection, setCurrentSection }: { currentSection: number,
   );
 };
 
-const Hero = () => {
+const Hero = ({ onNavigate }: { onNavigate: (idx: number) => void }) => {
   return (
     <section className="relative w-full h-[80svh] min-h-[500px] md:h-screen flex items-center overflow-hidden">
       {/* 반응형 영상 배경: 모바일과 PC 모두 화면에 꽉 차도록 object-cover 적용 */}
@@ -267,12 +294,35 @@ const Hero = () => {
             transition={{ duration: 0.8 }}
           >
             <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white leading-[1.3] tracking-tight drop-shadow-[0_4px_20px_rgba(0,0,0,0.6)]">
-              병원동행부터 간병, 요양까지<br className="hidden sm:block" />
-              <span className="sm:hidden"> </span>빠르고 편리하게
+              병원동행·방문요양부터<br className="hidden sm:block" />
+              <span className="sm:hidden"> </span>주간보호 창업까지
             </h1>
             <p className="mt-4 md:mt-6 text-base sm:text-xl text-slate-200 font-medium drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
-              내 가족을 돌보는 마음으로, 안전하고 믿을 수 있는 서비스를 제공합니다.
+              돌봄이 필요한 가족과 시니어 케어 창업자를 위한 전문 서비스를 한곳에서 제공합니다.
             </p>
+            <div className="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-center md:justify-start gap-2.5 sm:gap-3">
+              <a
+                href={HOSPITAL_COMPANION_APPLICATION_URL}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#0072BC] px-5 py-3 text-sm font-black text-white shadow-lg shadow-black/20 transition-all hover:-translate-y-0.5 hover:bg-[#005f9e]"
+              >
+                <ClipboardCheck className="w-4 h-4" />
+                병원동행서비스
+              </a>
+              <button
+                onClick={() => onNavigate(9)}
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/40 bg-white/10 px-5 py-3 text-sm font-black text-white backdrop-blur-sm transition-all hover:bg-white/20"
+              >
+                <Home className="w-4 h-4" />
+                방문요양 상담
+              </button>
+              <button
+                onClick={() => onNavigate(5)}
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#C9A96E]/60 bg-[#C9A96E]/15 px-5 py-3 text-sm font-black text-white backdrop-blur-sm transition-all hover:bg-[#C9A96E]/25"
+              >
+                <Building className="w-4 h-4" />
+                주간보호 창업 컨설팅
+              </button>
+            </div>
           </motion.div>
         </div>
       </div>
@@ -411,9 +461,11 @@ const CeoIntroduction = () => {
               </div>
 
               {/* 핵심 서비스 카드 */}
-              <div className="space-y-2.5 mb-5">
+              <div className="grid sm:grid-cols-2 gap-2.5 mb-5">
                 {[
-                  { title: '전문 간병 및 방문요양', desc: '엄격한 기준으로 선발된 요양보호사와 간병인 매칭', icon: <Heart className="w-4 h-4" /> },
+                  { title: '병원동행서비스', desc: '예약·접수부터 진료, 수납, 약국, 귀가까지 안심 동행', icon: <ClipboardCheck className="w-4 h-4" /> },
+                  { title: '방문요양 서비스', desc: '검증된 요양보호사가 가정을 방문해 신체·일상생활 지원', icon: <Home className="w-4 h-4" /> },
+                  { title: '주간보호 창업 컨설팅', desc: '입지 분석부터 지정심사, 인력 구성, 개원 운영까지 지원', icon: <Building className="w-4 h-4" /> },
                   { title: '등급 신청 토탈 케어', desc: '복잡한 노인장기요양등급 신청의 처음부터 끝까지 밀착 지원', icon: <FileText className="w-4 h-4" /> },
                   { title: '치매 예방 솔루션', desc: '지역 주민을 위한 치매 무료 검사 실시 및 사후 관리 연계', icon: <Activity className="w-4 h-4" /> },
                 ].map((item, i) => (
@@ -1164,17 +1216,17 @@ const FamilyCareForm = () => {
   );
 };
 
-// [NEW] 센터 창업 안내 컴포넌트
+// 방문요양·주간보호 창업 컨설팅 컴포넌트
 const StartupGuide = ({ onNavigate }: { onNavigate: (idx: number) => void }) => {
   const benefits = [
     {
-      title: "전국 2만 명 인력 네트워크",
-      desc: "본사가 검증한 대규모 요양보호사 및 간병인 DB를 통해 개설 초기 구인난 걱정을 원천 해결합니다.",
+      title: "지역 수요·입지 분석",
+      desc: "방문요양과 주간보호 운영에 필요한 지역별 장기요양 수요, 경쟁 기관, 접근성을 분석해 적합한 사업 모델을 설계합니다.",
       icon: <Users className="w-6 h-6 text-med-cyan" />
     },
     {
-      title: "스마트 행정 자동화 솔루션",
-      desc: "수작업 일지 작성과 공단 청구 절차를 획기적으로 시스템화하여 1인 원장도 50인 이상 운영 가능합니다.",
+      title: "사업계획·운영체계 구축",
+      desc: "사업계획서, 인력 배치, 수가와 손익 구조, 공단 청구까지 개원 후 바로 운영할 수 있는 체계를 함께 준비합니다.",
       icon: <Activity className="w-6 h-6 text-med-cyan" />
     },
     {
@@ -1183,8 +1235,8 @@ const StartupGuide = ({ onNavigate }: { onNavigate: (idx: number) => void }) => 
       icon: <ShieldCheck className="w-6 h-6 text-med-cyan" />
     },
     {
-      title: "고급화 브랜드 파워 & 마케팅",
-      desc: "지역 타겟 온라인 광고 및 정밀 브랜딩 솔루션을 무상 지원하여 오픈 첫 달 어르신 유치를 선점합니다.",
+      title: "개원 브랜딩·지역 마케팅",
+      desc: "기관의 강점을 분명히 보여주는 브랜딩과 지역 타겟 홍보 전략을 설계해 초기 이용자 모집을 지원합니다.",
       icon: <Award className="w-6 h-6 text-med-cyan" />
     }
   ];
@@ -1196,11 +1248,11 @@ const StartupGuide = ({ onNavigate }: { onNavigate: (idx: number) => void }) => 
         {/* 상단 헤더 */}
         <div className="text-center mb-14">
           <div className="inline-block px-4 py-1 bg-white/10 rounded-full border border-white/20 mb-3">
-            <span className="text-med-cyan font-black text-xs tracking-widest uppercase">Franchise Startup</span>
+          <span className="text-med-cyan font-black text-xs tracking-widest uppercase">Home Care & Day Care Startup</span>
           </div>
-          <h2 className="text-2xl md:text-4xl font-bold mb-4">센터 창업 안내</h2>
+          <h2 className="text-2xl md:text-4xl font-bold mb-4">방문요양·주간보호 창업 컨설팅</h2>
           <p className="text-slate-400 max-w-2xl mx-auto text-sm md:text-base">
-            클라우드나인 메디케어와 함께 실버 산업의 성공을 선점하세요. 본사의 강력한 플랫폼 기술과 노하우를 그대로 전수합니다.
+            방문요양센터와 주간보호센터의 입지 선정부터 지정심사, 인력 구성, 운영체계와 개원 마케팅까지 단계별로 함께합니다.
           </p>
         </div>
 
@@ -1228,7 +1280,7 @@ const StartupGuide = ({ onNavigate }: { onNavigate: (idx: number) => void }) => 
             onClick={() => onNavigate(9)} // 상담 신청 인덱스
             className="inline-flex items-center gap-2 bg-med-cyan text-slate-900 px-8 py-4 rounded-2xl font-black text-base md:text-lg hover:scale-105 transition-transform shadow-lg shadow-med-cyan/15 cursor-pointer"
           >
-            <span>센터 창업 컨설팅 무료 신청</span>
+            <span>방문요양·주간보호 창업 상담 신청</span>
             <ArrowRight className="w-5 h-5" />
           </button>
         </div>
@@ -1996,7 +2048,7 @@ export default function App() {
 
   // 홈이 첫 화면, 상담 신청이 마지막
   const sections = [
-    <Hero />,
+    <Hero onNavigate={handleSetSection} />,
     <CeoIntroduction />,
     <ServiceGuide onNavigate={handleSetSection} />,
     <RegistrationForm />,
