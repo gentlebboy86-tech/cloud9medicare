@@ -1231,7 +1231,7 @@ const StartupGuide = ({ onNavigate }: { onNavigate: (idx: number) => void }) => 
     },
     {
       title: "지정제 심사 밀착 통과제",
-      desc: "지정 심사 서류 작성부터 심사위원회 질문 시뮬레이션까지 본사 베테랑 팀이 동행하여 100% 합격을 지원합니다.",
+      desc: "지정 심사 서류 작성부터 심사위원회 질문 시뮬레이션까지 본사 베테랑 팀이 합격까지 밀착 동행합니다.",
       icon: <ShieldCheck className="w-6 h-6 text-med-cyan" />
     },
     {
@@ -1276,13 +1276,13 @@ const StartupGuide = ({ onNavigate }: { onNavigate: (idx: number) => void }) => 
 
         {/* 행동 유도 CTA 영역 */}
         <div className="text-center">
-          <button
-            onClick={() => onNavigate(9)} // 상담 신청 인덱스
+          <a
+            href="/startup"
             className="inline-flex items-center gap-2 bg-med-cyan text-slate-900 px-8 py-4 rounded-2xl font-black text-base md:text-lg hover:scale-105 transition-transform shadow-lg shadow-med-cyan/15 cursor-pointer"
           >
             <span>방문요양·주간보호 창업 상담 신청</span>
             <ArrowRight className="w-5 h-5" />
-          </button>
+          </a>
         </div>
 
       </div>
