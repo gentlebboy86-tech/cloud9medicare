@@ -1,12 +1,6 @@
 {
   "outputDirectory": "dist",
   "rewrites": [
-    { "source": "/hospital-companion", "destination": "/hospital-companion/index.html" },
-    { "source": "/login", "destination": "/hospital-companion/index.html" },
-    { "source": "/admin", "destination": "/hospital-companion/index.html" },
-    { "source": "/admin/:path*", "destination": "/hospital-companion/index.html" },
-    { "source": "/manager", "destination": "/hospital-companion/index.html" },
-    { "source": "/manager/:path*", "destination": "/hospital-companion/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

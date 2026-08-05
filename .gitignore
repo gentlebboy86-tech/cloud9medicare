@@ -7,3 +7,8 @@ coverage/
 .env*
 !.env.example
 .vercel
+.npm-cache/
+tmp/
+output/
+manager-referrer-preview.html
+manager-referrer-preview.png

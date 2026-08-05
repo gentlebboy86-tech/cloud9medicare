@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="ko"><head>
+<html lang="ko">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>클라우드나인메디케어 — 노인장기요양등급 모의판정</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500&amp;family=Poppins:wght@500&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500&family=Poppins:wght@500&display=swap">
 <style>
   :root{
     --brand:#2196d3; --brand-dk:#1878ad; --navy:#14304e; --navy2:#1e5f96;
@@ -135,18 +136,18 @@
   <div class="topbar-in">
     <div class="logo">
       <svg viewBox="0 0 490 224" fill="none" stroke="currentColor" stroke-width="16" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="CLOUD9 Medi Care">
-        <path d="M60,26 H40 Q20,26 20,46 V174 Q20,194 40,194 H60"></path>
-        <rect x="76" y="8" width="5" height="208" fill="currentColor" stroke="none"></rect>
-        <path d="M100,18 V194 H140"></path>
-        <rect x="156" y="8" width="5" height="208" fill="currentColor" stroke="none"></rect>
-        <rect x="180" y="26" width="40" height="168" rx="20"></rect>
-        <rect x="236" y="8" width="5" height="208" fill="currentColor" stroke="none"></rect>
-        <path d="M260,18 V166 Q260,194 280,194 Q300,194 300,166 V18"></path>
-        <rect x="316" y="8" width="5" height="208" fill="currentColor" stroke="none"></rect>
-        <path d="M340,30 Q340,26 344,26 H360 Q380,26 380,50 V170 Q380,194 360,194 H344 Q340,194 340,190 Z"></path>
-        <rect x="396" y="8" width="5" height="208" fill="currentColor" stroke="none"></rect>
-        <rect x="420" y="26" width="40" height="76" rx="18"></rect>
-        <path d="M460,90 V172 Q460,194 438,194"></path>
+        <path d="M60,26 H40 Q20,26 20,46 V174 Q20,194 40,194 H60"/>
+        <rect x="76" y="8" width="5" height="208" fill="currentColor" stroke="none"/>
+        <path d="M100,18 V194 H140"/>
+        <rect x="156" y="8" width="5" height="208" fill="currentColor" stroke="none"/>
+        <rect x="180" y="26" width="40" height="168" rx="20"/>
+        <rect x="236" y="8" width="5" height="208" fill="currentColor" stroke="none"/>
+        <path d="M260,18 V166 Q260,194 280,194 Q300,194 300,166 V18"/>
+        <rect x="316" y="8" width="5" height="208" fill="currentColor" stroke="none"/>
+        <path d="M340,30 Q340,26 344,26 H360 Q380,26 380,50 V170 Q380,194 360,194 H344 Q340,194 340,190 Z"/>
+        <rect x="396" y="8" width="5" height="208" fill="currentColor" stroke="none"/>
+        <rect x="420" y="26" width="40" height="76" rx="18"/>
+        <path d="M460,90 V172 Q460,194 438,194"/>
       </svg>
       <div class="sub">Medi Care</div>
     </div>
@@ -171,7 +172,7 @@
   </div>
 </div>
 
-<div id="view-auth" class="">
+<div id="view-auth" class="hidden">
   <div class="card auth-card">
     <div class="auth-tabs">
       <button id="tab-login" class="on" onclick="authTab('login')">로그인</button>
@@ -181,7 +182,6 @@
       <div id="signup-fields" class="hidden">
         <div class="field"><label>이름</label><input type="text" id="su-name" placeholder="홍길동"></div>
         <div class="field"><label>소속기관</label><input type="text" id="su-org" placeholder="○○재가복지센터"></div>
-        <div class="field"><label>전화번호</label><input type="tel" id="su-phone" inputmode="tel" autocomplete="tel" placeholder="010-0000-0000"></div>
       </div>
       <div class="field"><label>이메일</label><input type="email" id="au-email" placeholder="email@example.com"></div>
       <div class="field"><label>비밀번호</label><input type="password" id="au-pw" placeholder="6자 이상"></div>
@@ -210,8 +210,7 @@
   <nav class="tabs">
     <button id="nav-exam" class="on" onclick="mainTab('exam')">등급 검사</button>
     <button id="nav-records" onclick="mainTab('records')">내 검사기록</button>
-    <button id="nav-allrecords" class="hidden" onclick="mainTab('allrecords')">전체 검사기록</button>
-    <button id="nav-admin" class="hidden" onclick="mainTab('admin')">회원 관리</button>
+    <button id="nav-admin" class="hidden" onclick="mainTab('admin')">관리자</button>
   </nav>
 
   <div class="wrap" id="page-exam">
@@ -227,14 +226,14 @@
         <div class="basic-row">
           <span class="lbl">치매 진단 여부</span>
           <div class="opts">
-            <label><input type="radio" name="dementia" value="0" checked=""><span>아니오</span></label>
+            <label><input type="radio" name="dementia" value="0" checked><span>아니오</span></label>
             <label><input type="radio" name="dementia" value="1"><span>예 (치매 진단)</span></label>
           </div>
         </div>
       </div>
     </section>
 
-    <div id="form"><section class="card"><div class="card-head"><h2>신체기능 (기본적 일상생활기능)</h2><span class="cnt">12항목</span></div><div class="card-body"><div class="item"><div class="q"><span class="no">1.</span>옷 벗고 입기</div><div class="script">💬 "옷은 혼자 입고 벗으실 수 있으세요? 단추나 지퍼도 혼자 하시나요?"</div><div class="opts"><label><input type="radio" name="phy0" value="1" checked=""><span>완전자립</span></label><label><input type="radio" name="phy0" value="2"><span>부분도움</span></label><label><input type="radio" name="phy0" value="3"><span>완전도움</span></label></div></div><div class="item"><div class="q"><span class="no">2.</span>세수하기</div><div class="script">💬 "세수는 혼자 하시나요? 수건으로 얼굴 닦는 것까지 가능하세요?"</div><div class="opts"><label><input type="radio" name="phy1" value="1" checked=""><span>완전자립</span></label><label><input type="radio" name="phy1" value="2"><span>부분도움</span></label><label><input type="radio" name="phy1" value="3"><span>완전도움</span></label></div></div><div class="item"><div class="q"><span class="no">3.</span>양치질하기</div><div class="script">💬 "치약을 짜서 양치질하고 입을 헹구는 것까지 혼자 하시나요?"</div><div class="opts"><label><input type="radio" name="phy2" value="1" checked=""><span>완전자립</span></label><label><input type="radio" name="phy2" value="2"><span>부분도움</span></label><label><input type="radio" name="phy2" value="3"><span>완전도움</span></label></div></div><div class="item"><div class="q"><span class="no">4.</span>목욕하기</div><div class="script">💬 "목욕이나 샤워는 혼자 하시나요, 아니면 씻겨 드려야 하나요?"</div><div class="opts"><label><input type="radio" name="phy3" value="1" checked=""><span>완전자립</span></label><label><input type="radio" name="phy3" value="2"><span>부분도움</span></label><label><input type="radio" name="phy3" value="3"><span>완전도움</span></label></div></div><div class="item"><div class="q"><span class="no">5.</span>식사하기</div><div class="script">💬 "식사를 차려 드리면 흘리지 않고 혼자 드시나요? 떠먹여 드려야 하나요?"</div><div class="opts"><label><input type="radio" name="phy4" value="1" checked=""><span>완전자립</span></label><label><input type="radio" name="phy4" value="2"><span>부분도움</span></label><label><input type="radio" name="phy4" value="3"><span>완전도움</span></label></div></div><div class="item"><div class="q"><span class="no">6.</span>체위 변경하기</div><div class="script">💬 "누워 계실 때 혼자 몸을 돌려 눕거나 뒤척이실 수 있나요?"</div><div class="opts"><label><input type="radio" name="phy5" value="1" checked=""><span>완전자립</span></label><label><input type="radio" name="phy5" value="2"><span>부분도움</span></label><label><input type="radio" name="phy5" value="3"><span>완전도움</span></label></div></div><div class="item"><div class="q"><span class="no">7.</span>일어나 앉기</div><div class="script">💬 "누운 상태에서 혼자 일어나 앉으실 수 있으세요?"</div><div class="opts"><label><input type="radio" name="phy6" value="1" checked=""><span>완전자립</span></label><label><input type="radio" name="phy6" value="2"><span>부분도움</span></label><label><input type="radio" name="phy6" value="3"><span>완전도움</span></label></div></div><div class="item"><div class="q"><span class="no">8.</span>옮겨 앉기</div><div class="script">💬 "침대에서 의자나 휠체어로 옮겨 앉을 때 부축이 필요한가요?"</div><div class="opts"><label><input type="radio" name="phy7" value="1" checked=""><span>완전자립</span></label><label><input type="radio" name="phy7" value="2"><span>부분도움</span></label><label><input type="radio" name="phy7" value="3"><span>완전도움</span></label></div></div><div class="item"><div class="q"><span class="no">9.</span>방 밖으로 나오기</div><div class="script">💬 "방에서 거실이나 현관까지 혼자 걸어 나오실 수 있나요?"</div><div class="opts"><label><input type="radio" name="phy8" value="1" checked=""><span>완전자립</span></label><label><input type="radio" name="phy8" value="2"><span>부분도움</span></label><label><input type="radio" name="phy8" value="3"><span>완전도움</span></label></div></div><div class="item"><div class="q"><span class="no">10.</span>화장실 사용하기</div><div class="script">💬 "화장실에서 옷을 내리고 볼일 본 후 뒤처리까지 혼자 하시나요?"</div><div class="opts"><label><input type="radio" name="phy9" value="1" checked=""><span>완전자립</span></label><label><input type="radio" name="phy9" value="2"><span>부분도움</span></label><label><input type="radio" name="phy9" value="3"><span>완전도움</span></label></div></div><div class="item"><div class="q"><span class="no">11.</span>대변 조절하기</div><div class="script">💬 "대변을 못 참거나 실수하시는 일이 있나요?"</div><div class="opts"><label><input type="radio" name="phy10" value="1" checked=""><span>완전자립</span></label><label><input type="radio" name="phy10" value="2"><span>부분도움</span></label><label><input type="radio" name="phy10" value="3"><span>완전도움</span></label></div></div><div class="item"><div class="q"><span class="no">12.</span>소변 조절하기</div><div class="script">💬 "소변을 못 참거나 지리시는 일이 있나요? 기저귀를 사용하시나요?"</div><div class="opts"><label><input type="radio" name="phy11" value="1" checked=""><span>완전자립</span></label><label><input type="radio" name="phy11" value="2"><span>부분도움</span></label><label><input type="radio" name="phy11" value="3"><span>완전도움</span></label></div></div></div></section><section class="card"><div class="card-head"><h2>인지기능</h2><span class="cnt">7항목</span></div><div class="card-body"><div class="item"><div class="q"><span class="no">13.</span>단기 기억장애</div><div class="desc">방금 전에 들었던 이야기나 일을 잊는다</div><div class="script">💬 "(어르신께) 오늘 아침에 무엇을 드셨어요? / (보호자께) 방금 한 이야기를 금방 잊고 되물으시나요?"</div><div class="opts"><label><input type="radio" name="cog0" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="cog0" value="1"><span>예(있음)</span></label></div></div><div class="item"><div class="q"><span class="no">14.</span>날짜 불인지</div><div class="desc">오늘이 몇 년, 몇 월, 며칠인지 모른다</div><div class="script">💬 "어르신, 오늘이 몇 년도 몇 월 며칠인지 아세요?"</div><div class="opts"><label><input type="radio" name="cog1" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="cog1" value="1"><span>예(있음)</span></label></div></div><div class="item"><div class="q"><span class="no">15.</span>장소 불인지</div><div class="desc">자신이 있는 장소를 알지 못한다</div><div class="script">💬 "지금 계신 이곳이 어디인지 아시겠어요?"</div><div class="opts"><label><input type="radio" name="cog2" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="cog2" value="1"><span>예(있음)</span></label></div></div><div class="item"><div class="q"><span class="no">16.</span>나이·생년월일 불인지</div><div class="desc">자신의 나이와 생년월일을 모른다</div><div class="script">💬 "어르신 연세가 어떻게 되세요? 생신은 언제세요?"</div><div class="opts"><label><input type="radio" name="cog3" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="cog3" value="1"><span>예(있음)</span></label></div></div><div class="item"><div class="q"><span class="no">17.</span>지시 불인지</div><div class="desc">지시를 이해하지 못한다</div><div class="script">💬 "'물 한 잔 떠다 주세요' 같은 간단한 부탁을 알아듣고 하시나요?"</div><div class="opts"><label><input type="radio" name="cog4" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="cog4" value="1"><span>예(있음)</span></label></div></div><div class="item"><div class="q"><span class="no">18.</span>상황 판단력 감퇴</div><div class="desc">주어진 상황에 대한 판단력이 감퇴되어 있다</div><div class="script">💬 "가스불 끄기, 문단속 같은 일을 스스로 판단해서 처리하시나요?"</div><div class="opts"><label><input type="radio" name="cog5" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="cog5" value="1"><span>예(있음)</span></label></div></div><div class="item"><div class="q"><span class="no">19.</span>의사소통·전달 장애</div><div class="desc">의사소통이나 전달에 장애가 있다</div><div class="script">💬 "하고 싶은 말씀을 상대방이 알아듣게 전달하실 수 있나요?"</div><div class="opts"><label><input type="radio" name="cog6" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="cog6" value="1"><span>예(있음)</span></label></div></div></div></section><section class="card"><div class="card-head"><h2>행동변화</h2><span class="cnt">14항목</span></div><div class="card-body"><div class="item"><div class="q"><span class="no">20.</span>망상</div><div class="desc">사람들이 무엇을 훔쳐갔다고 믿거나 자신을 해치려 한다고 잘못 믿고 있다</div><div class="script">💬 "물건을 도둑맞았다고 하시거나, 누가 해치려 한다고 믿으신 적이 있나요?"</div><div class="opts"><label><input type="radio" name="beh0" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="beh0" value="1"><span>예(있음)</span></label></div></div><div class="item"><div class="q"><span class="no">21.</span>환각·환청</div><div class="desc">헛것을 보거나 환청을 듣는다</div><div class="script">💬 "헛것이 보인다거나 이상한 소리가 들린다고 하신 적이 있나요?"</div><div class="opts"><label><input type="radio" name="beh1" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="beh1" value="1"><span>예(있음)</span></label></div></div><div class="item"><div class="q"><span class="no">22.</span>슬픈 상태·울기도 함</div><div class="desc">슬퍼 보이거나 기분이 처져 있으며 때로 울기도 한다</div><div class="script">💬 "이유 없이 슬퍼하시거나 우시는 일이 자주 있나요?"</div><div class="opts"><label><input type="radio" name="beh2" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="beh2" value="1"><span>예(있음)</span></label></div></div><div class="item"><div class="q"><span class="no">23.</span>불규칙 수면·주야혼돈</div><div class="desc">밤에 자다 일어나 주위를 깨우거나, 낮과 밤의 수면이 뒤바뀐다</div><div class="script">💬 "밤에 일어나 가족을 깨우시거나, 낮과 밤이 바뀐 생활을 하시나요?"</div><div class="opts"><label><input type="radio" name="beh3" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="beh3" value="1"><span>예(있음)</span></label></div></div><div class="item"><div class="q"><span class="no">24.</span>도움에 저항</div><div class="desc">주위 사람이 도와주려 할 때 저항한다</div><div class="script">💬 "씻겨 드리거나 도와드리려 하면 뿌리치며 거부하시나요?"</div><div class="opts"><label><input type="radio" name="beh4" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="beh4" value="1"><span>예(있음)</span></label></div></div><div class="item"><div class="q"><span class="no">25.</span>서성거림·안절부절못함</div><div class="desc">한군데 가만히 있지 못하고 서성거리거나 안절부절 못한다</div><div class="script">💬 "가만히 계시지 못하고 집 안을 왔다 갔다 하시나요?"</div><div class="opts"><label><input type="radio" name="beh5" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="beh5" value="1"><span>예(있음)</span></label></div></div><div class="item"><div class="q"><span class="no">26.</span>길을 잃음</div><div class="desc">길을 잃거나 헤맨 적이 있다. 외출 시 혼자 귀가하지 못한다</div><div class="script">💬 "외출하셨다가 길을 잃거나 집을 못 찾으신 적이 있나요?"</div><div class="opts"><label><input type="radio" name="beh6" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="beh6" value="1"><span>예(있음)</span></label></div></div><div class="item"><div class="q"><span class="no">27.</span>폭언·위협행동</div><div class="desc">화를 내며 폭언이나 폭행 등 위협적인 행동을 보인다</div><div class="script">💬 "화를 내며 소리치거나 때리려고 하신 적이 있나요?"</div><div class="opts"><label><input type="radio" name="beh7" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="beh7" value="1"><span>예(있음)</span></label></div></div><div class="item"><div class="q"><span class="no">28.</span>밖으로 나가려 함</div><div class="desc">혼자 밖으로 나가려고 해서 눈을 뗄 수 없다</div><div class="script">💬 "혼자 밖으로 나가려고 해서 잠시도 눈을 뗄 수 없나요?"</div><div class="opts"><label><input type="radio" name="beh8" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="beh8" value="1"><span>예(있음)</span></label></div></div><div class="item"><div class="q"><span class="no">29.</span>물건 망가트리기</div><div class="desc">물건을 망가뜨리거나 부순다</div><div class="script">💬 "물건을 던지거나 부수신 적이 있나요?"</div><div class="opts"><label><input type="radio" name="beh9" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="beh9" value="1"><span>예(있음)</span></label></div></div><div class="item"><div class="q"><span class="no">30.</span>의미없거나 부적절한 행동</div><div class="desc">의미가 없거나 부적절한 행동을 자주 보인다</div><div class="script">💬 "같은 행동을 반복하거나 이유 없는 행동을 자주 하시나요?"</div><div class="opts"><label><input type="radio" name="beh10" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="beh10" value="1"><span>예(있음)</span></label></div></div><div class="item"><div class="q"><span class="no">31.</span>돈·물건 감추기</div><div class="desc">돈이나 물건을 찾기 어려운 곳에 감춘다</div><div class="script">💬 "돈이나 물건을 엉뚱한 곳에 숨기시나요?"</div><div class="opts"><label><input type="radio" name="beh11" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="beh11" value="1"><span>예(있음)</span></label></div></div><div class="item"><div class="q"><span class="no">32.</span>부적절한 옷 입기</div><div class="desc">옷을 부적절하게 입는다</div><div class="script">💬 "계절에 맞지 않거나 순서가 뒤바뀌게 옷을 입으시나요?"</div><div class="opts"><label><input type="radio" name="beh12" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="beh12" value="1"><span>예(있음)</span></label></div></div><div class="item"><div class="q"><span class="no">33.</span>대소변 불결행위</div><div class="desc">대소변을 벽이나 옷에 바르는 등 불결한 행위를 한다</div><div class="script">💬 "대소변을 만지거나 벽·옷에 묻히신 적이 있나요?"</div><div class="opts"><label><input type="radio" name="beh13" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="beh13" value="1"><span>예(있음)</span></label></div></div></div></section><section class="card"><div class="card-head"><h2>간호처치</h2><span class="cnt">9항목</span></div><div class="card-body"><div class="item"><div class="q"><span class="no">34.</span>기관지 절개관 간호</div><div class="script">💬 "목에 호흡용 관(기관절개관)이 있어서 관리가 필요한가요?"</div><div class="opts"><label><input type="radio" name="nur0" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="nur0" value="1"><span>예(있음)</span></label></div></div><div class="item"><div class="q"><span class="no">35.</span>흡인</div><div class="script">💬 "가래를 기계(석션)로 뽑아 드려야 하나요?"</div><div class="opts"><label><input type="radio" name="nur1" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="nur1" value="1"><span>예(있음)</span></label></div></div><div class="item"><div class="q"><span class="no">36.</span>산소요법</div><div class="script">💬 "집에서 산소발생기나 산소통을 사용하고 계신가요?"</div><div class="opts"><label><input type="radio" name="nur2" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="nur2" value="1"><span>예(있음)</span></label></div></div><div class="item"><div class="q"><span class="no">37.</span>욕창간호</div><div class="script">💬 "욕창(피부 짓무름)이 있어 소독이나 드레싱을 하고 있나요?"</div><div class="opts"><label><input type="radio" name="nur3" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="nur3" value="1"><span>예(있음)</span></label></div></div><div class="item"><div class="q"><span class="no">38.</span>경관영양</div><div class="script">💬 "콧줄이나 뱃줄(위루관)로 영양을 공급하고 있나요?"</div><div class="opts"><label><input type="radio" name="nur4" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="nur4" value="1"><span>예(있음)</span></label></div></div><div class="item"><div class="q"><span class="no">39.</span>암성통증간호</div><div class="script">💬 "암으로 인한 통증 조절 처치를 받고 계신가요?"</div><div class="opts"><label><input type="radio" name="nur5" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="nur5" value="1"><span>예(있음)</span></label></div></div><div class="item"><div class="q"><span class="no">40.</span>도뇨관리</div><div class="script">💬 "소변줄(도뇨관)을 사용 중이거나 정기적으로 소변을 빼 드려야 하나요?"</div><div class="opts"><label><input type="radio" name="nur6" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="nur6" value="1"><span>예(있음)</span></label></div></div><div class="item"><div class="q"><span class="no">41.</span>장루간호</div><div class="script">💬 "장루(인공항문) 주머니를 관리하고 계신가요?"</div><div class="opts"><label><input type="radio" name="nur7" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="nur7" value="1"><span>예(있음)</span></label></div></div><div class="item"><div class="q"><span class="no">42.</span>투석간호</div><div class="script">💬 "혈액투석이나 복막투석을 받고 계신가요?"</div><div class="opts"><label><input type="radio" name="nur8" value="0" checked=""><span>아니오(없음)</span></label><label><input type="radio" name="nur8" value="1"><span>예(있음)</span></label></div></div></div></section><section class="card"><div class="card-head"><h2>재활 (운동장애·관절제한)</h2><span class="cnt">10항목</span></div><div class="card-body"><div class="item"><div class="q"><span class="no">43.</span>우측 상지 운동장애</div><div class="script">💬 "오른팔과 오른손을 자유롭게 들어 올리고 쓰실 수 있나요? 힘이 없거나 마비가 있나요?"</div><div class="opts"><label><input type="radio" name="reh0" value="1" checked=""><span>운동장애 없음</span></label><label><input type="radio" name="reh0" value="2"><span>불완전 운동장애</span></label><label><input type="radio" name="reh0" value="3"><span>완전 운동장애</span></label></div></div><div class="item"><div class="q"><span class="no">44.</span>좌측 상지 운동장애</div><div class="script">💬 "왼팔과 왼손을 자유롭게 들어 올리고 쓰실 수 있나요? 힘이 없거나 마비가 있나요?"</div><div class="opts"><label><input type="radio" name="reh1" value="1" checked=""><span>운동장애 없음</span></label><label><input type="radio" name="reh1" value="2"><span>불완전 운동장애</span></label><label><input type="radio" name="reh1" value="3"><span>완전 운동장애</span></label></div></div><div class="item"><div class="q"><span class="no">45.</span>우측 하지 운동장애</div><div class="script">💬 "오른쪽 다리에 힘이 없거나 마비가 있어 걷기 불편하신가요?"</div><div class="opts"><label><input type="radio" name="reh2" value="1" checked=""><span>운동장애 없음</span></label><label><input type="radio" name="reh2" value="2"><span>불완전 운동장애</span></label><label><input type="radio" name="reh2" value="3"><span>완전 운동장애</span></label></div></div><div class="item"><div class="q"><span class="no">46.</span>좌측 하지 운동장애</div><div class="script">💬 "왼쪽 다리에 힘이 없거나 마비가 있어 걷기 불편하신가요?"</div><div class="opts"><label><input type="radio" name="reh3" value="1" checked=""><span>운동장애 없음</span></label><label><input type="radio" name="reh3" value="2"><span>불완전 운동장애</span></label><label><input type="radio" name="reh3" value="3"><span>완전 운동장애</span></label></div></div><div class="item"><div class="q"><span class="no">47.</span>어깨관절 제한</div><div class="script">💬 "팔이 어깨 위로 잘 올라가나요? 굳어서 안 올라가는 쪽이 있나요?"</div><div class="opts"><label><input type="radio" name="reh4" value="1" checked=""><span>제한 없음</span></label><label><input type="radio" name="reh4" value="2"><span>한쪽관절 제한</span></label><label><input type="radio" name="reh4" value="3"><span>양관절 제한</span></label></div></div><div class="item"><div class="q"><span class="no">48.</span>팔꿈치관절 제한</div><div class="script">💬 "팔꿈치를 끝까지 굽혔다 펴는 데 제한이 있나요?"</div><div class="opts"><label><input type="radio" name="reh5" value="1" checked=""><span>제한 없음</span></label><label><input type="radio" name="reh5" value="2"><span>한쪽관절 제한</span></label><label><input type="radio" name="reh5" value="3"><span>양관절 제한</span></label></div></div><div class="item"><div class="q"><span class="no">49.</span>손목 및 수지관절 제한</div><div class="script">💬 "손목을 돌리고 손가락을 쥐었다 펴는 것이 잘 되나요?"</div><div class="opts"><label><input type="radio" name="reh6" value="1" checked=""><span>제한 없음</span></label><label><input type="radio" name="reh6" value="2"><span>한쪽관절 제한</span></label><label><input type="radio" name="reh6" value="3"><span>양관절 제한</span></label></div></div><div class="item"><div class="q"><span class="no">50.</span>고관절 제한</div><div class="script">💬 "다리를 벌리거나 들어 올릴 때 엉덩이 관절이 굳어 있나요?"</div><div class="opts"><label><input type="radio" name="reh7" value="1" checked=""><span>제한 없음</span></label><label><input type="radio" name="reh7" value="2"><span>한쪽관절 제한</span></label><label><input type="radio" name="reh7" value="3"><span>양관절 제한</span></label></div></div><div class="item"><div class="q"><span class="no">51.</span>무릎관절 제한</div><div class="script">💬 "무릎을 끝까지 굽혔다 펴는 데 제한이 있나요?"</div><div class="opts"><label><input type="radio" name="reh8" value="1" checked=""><span>제한 없음</span></label><label><input type="radio" name="reh8" value="2"><span>한쪽관절 제한</span></label><label><input type="radio" name="reh8" value="3"><span>양관절 제한</span></label></div></div><div class="item"><div class="q"><span class="no">52.</span>발목관절 제한</div><div class="script">💬 "발목을 위아래로 움직이는 데 제한이 있나요?"</div><div class="opts"><label><input type="radio" name="reh9" value="1" checked=""><span>제한 없음</span></label><label><input type="radio" name="reh9" value="2"><span>한쪽관절 제한</span></label><label><input type="radio" name="reh9" value="3"><span>양관절 제한</span></label></div></div></div></section></div>
+    <div id="form"></div>
 
     <div class="btnrow">
       <button class="primary" onclick="showResult()">등급 모의판정 결과 보기</button>
@@ -323,30 +322,21 @@
       <div class="card-head"><h2>회원 관리</h2><span class="cnt" id="mem-cnt"></span></div>
       <div class="card-body scroll">
         <table>
-          <thead><tr><th>가입일</th><th>이메일</th><th>이름</th><th>전화번호</th><th>소속기관</th><th>상태</th><th>관리</th></tr></thead>
+          <thead><tr><th>가입일</th><th>이메일</th><th>이름</th><th>소속기관</th><th>상태</th><th>관리</th></tr></thead>
           <tbody id="mem-body"></tbody>
         </table>
       </div>
     </section>
-  </div>
-
-  <div class="wrap hidden" id="page-allrecords">
     <section class="card">
       <div class="card-head">
         <h2>전체 검사기록</h2>
-        <span class="cnt" id="allrec-cnt"></span>
+        <button class="ghost" onclick="exportCSV()">CSV 다운로드</button>
       </div>
-      <div class="card-body">
-        <div class="btnrow" style="margin:0 0 14px;">
-          <button class="ghost" onclick="loadAllRecords()">새로고침</button>
-          <button class="ghost" onclick="exportCSV()">CSV 다운로드</button>
-        </div>
-        <div class="scroll">
-          <table>
-            <thead><tr><th>일시</th><th>검사자</th><th>대상자</th><th>치매</th><th>점수</th><th>예상등급</th><th>관리</th></tr></thead>
-            <tbody id="allrec-body"></tbody>
-          </table>
-        </div>
+      <div class="card-body scroll">
+        <table>
+          <thead><tr><th>일시</th><th>검사자</th><th>대상자</th><th>치매</th><th>점수</th><th>예상등급</th><th>관리</th></tr></thead>
+          <tbody id="allrec-body"></tbody>
+        </table>
       </div>
     </section>
   </div>
@@ -486,13 +476,12 @@ function authTab(t){
   document.getElementById("au-err").textContent=""; document.getElementById("au-ok").textContent="";
 }
 function mainTab(t){
-  ["exam","records","allrecords","admin"].forEach(p=>{
+  ["exam","records","admin"].forEach(p=>{
     document.getElementById("page-"+p).classList.toggle("hidden", p!==t);
     const nb=document.getElementById("nav-"+p); if(nb) nb.classList.toggle("on", p===t);
   });
   if(t==="records") loadMyRecords();
-  if(t==="allrecords") loadAllRecords();
-  if(t==="admin") loadMembers();
+  if(t==="admin"){ loadMembers(); loadAllRecords(); }
 }
 
 async function doAuth(){
@@ -510,11 +499,8 @@ async function doAuth(){
     }else{
       const name = document.getElementById("su-name").value.trim();
       const org  = document.getElementById("su-org").value.trim();
-      const phone = document.getElementById("su-phone").value.trim();
       if(!name){ err.textContent="이름을 입력하세요."; btn.disabled=false; return; }
-      const phoneDigits = phone.replace(/\D/g,"");
-      if(phoneDigits.length<10||phoneDigits.length>11){ err.textContent="전화번호를 정확히 입력하세요."; btn.disabled=false; return; }
-      const {data, error} = await sb.auth.signUp({email, password:pw, options:{data:{name, org, phone}, emailRedirectTo: window.location.href}});
+      const {data, error} = await sb.auth.signUp({email, password:pw, options:{data:{name, org}, emailRedirectTo: window.location.href}});
       if(error) throw error;
       if(!data.session){
         ok.textContent="가입 신청 완료. 이메일 인증 메일을 확인한 뒤 로그인하세요. 이후 관리자 승인이 완료되면 이용 가능합니다.";
@@ -548,7 +534,6 @@ function route(){
   else if(profile && profile.approved){ bd.textContent="승인회원"; bd.className="badge"; }
   else { bd.textContent="승인대기"; bd.className="badge"; }
   if(!profile || !profile.approved){ show("pending"); return; }
-  document.getElementById("nav-allrecords").classList.toggle("hidden", !profile.is_admin);
   document.getElementById("nav-admin").classList.toggle("hidden", !profile.is_admin);
   show("main");
 }
@@ -694,23 +679,15 @@ async function loadMyRecords(){
 }
 
 async function loadMembers(){
-  const [profileResult, applicationResult, directoryResult] = await Promise.all([
-    sb.from("profiles").select("*").order("created_at",{ascending:false}),
-    sb.from("manager_applications").select("user_id"),
-    sb.rpc("admin_list_members")
-  ]);
-  const managerIds = new Set([
-    ...(applicationResult.data||[]).map(r=>r.user_id),
-    ...(directoryResult.data||[]).filter(r=>r.role==="manager").map(r=>r.user_id)
-  ].filter(Boolean));
-  const rows=(profileResult.data||[]).filter(r=>r.role!=="manager"&&!managerIds.has(r.id));
+  const {data} = await sb.from("profiles").select("*").order("created_at",{ascending:false});
+  const rows=data||[];
   document.getElementById("mem-cnt").textContent = `총 ${rows.length}명 · 승인대기 ${rows.filter(r=>!r.approved).length}명`;
   document.getElementById("mem-body").innerHTML = rows.map(r=>{
     const st = r.is_admin?`<span class="pill adm">관리자</span>`:(r.approved?`<span class="pill ok">승인</span>`:`<span class="pill wait">대기</span>`);
     const btn = r.is_admin?"":(r.approved
       ?`<button class="mini revoke" onclick="setApprove('${r.id}',false)">승인취소</button>`
       :`<button class="mini approve" onclick="setApprove('${r.id}',true)">승인</button>`);
-    return `<tr><td>${fmtDate(r.created_at)}</td><td class="l">${esc(r.email)}</td><td>${esc(r.name)||"-"}</td><td>${esc(r.phone)||"-"}</td><td>${esc(r.org)||"-"}</td><td>${st}</td><td>${btn}</td></tr>`;
+    return `<tr><td>${fmtDate(r.created_at)}</td><td class="l">${esc(r.email)}</td><td>${esc(r.name)||"-"}</td><td>${esc(r.org)||"-"}</td><td>${st}</td><td>${btn}</td></tr>`;
   }).join("");
 }
 async function setApprove(id, val){
@@ -719,37 +696,9 @@ async function setApprove(id, val){
   loadMembers();
 }
 async function loadAllRecords(){
-  const body=document.getElementById("allrec-body");
-  const count=document.getElementById("allrec-cnt");
-  body.innerHTML=`<tr><td colspan="7" style="color:var(--sub);">전체 기록을 불러오는 중입니다.</td></tr>`;
-  count.textContent="";
-
-  const pageSize=1000;
-  const rows=[];
-  let from=0;
-  let assessmentError=null;
-  while(true){
-    const result=await sb.from("assessments").select("*").order("created_at",{ascending:false}).range(from,from+pageSize-1);
-    if(result.error){ assessmentError=result.error; break; }
-    const batch=result.data||[];
-    rows.push(...batch);
-    if(batch.length<pageSize) break;
-    from+=pageSize;
-  }
-
-  const profileResult=await sb.from("profiles").select("id,email,name");
-  if(assessmentError || profileResult.error){
-    const message=(assessmentError||profileResult.error).message;
-    allRecords=[];
-    count.textContent="조회 실패";
-    body.innerHTML=`<tr><td colspan="7" style="color:var(--warn);">전체 기록을 불러오지 못했습니다: ${esc(message)}</td></tr>`;
-    return;
-  }
-
-  const profileMap=new Map((profileResult.data||[]).map(p=>[p.id,p]));
-  allRecords=rows.map(r=>({...r,profiles:profileMap.get(r.user_id)||null}));
-  count.textContent=`총 ${allRecords.length}건`;
-  body.innerHTML = allRecords.length===0
+  const {data} = await sb.from("assessments").select("*, profiles(email,name)").order("created_at",{ascending:false});
+  allRecords = data||[];
+  document.getElementById("allrec-body").innerHTML = allRecords.length===0
     ? `<tr><td colspan="7" style="color:var(--sub);">기록이 없습니다.</td></tr>`
     : allRecords.map(r=>`<tr><td>${fmtDate(r.created_at)}</td><td class="l">${esc(r.profiles?.name||"")} (${esc(r.profiles?.email||"")})</td><td>${esc(r.patient_name)||"-"}</td><td>${r.dementia?"예":"아니오"}</td><td>${Number(r.total_score).toFixed(1)}</td><td><b>${r.grade}</b></td>
       <td><button class="mini view" onclick="openDetail(${r.id},'all')">상세</button> <button class="mini del" onclick="delRecord(${r.id},'all')">삭제</button></td></tr>`).join("");
@@ -800,7 +749,5 @@ function openDetail(id, from){
 }
 function closeModal(){ document.getElementById("modalbg").style.display="none"; }
 </script>
-
-
 </body>
 </html>
